@@ -5,7 +5,7 @@ from ipaddress import IPv4Address
 from syncgandidns.ipv4address_param import IPv4AddressParamType
 
 
-class TestIPAddressParam(TestCase):
+class TestIPv4AddressParam(TestCase):
 
     def setUp(self):
         self.param_type = IPv4AddressParamType()
