@@ -2,7 +2,7 @@ from unittest import TestCase
 from click import BadParameter
 from ipaddress import IPv4Address
 
-from syncgandidns.ipaddress_param import IPv4AddressParamType
+from syncgandidns.ipv4address_param import IPv4AddressParamType
 
 
 class TestIPAddressParam(TestCase):
