@@ -13,8 +13,8 @@ class TestBaseCommand(TestCase):
         result = self.runner.invoke(main.syncgandidns, ['--help'])
         self.assertEqual(result.exit_code, 0)
         self.assertIn(" --version ", result.output)
-        self.assertIn(" --ipv4 ", result.output)
-        self.assertIn(" --ipv6 ", result.output)
+        self.assertIn(" -ipv4 ", result.output)
+        self.assertIn(" -ipv6 ", result.output)
         self.assertIn(" --log-level ", result.output)
         self.assertIn(" --help ", result.output)
 
@@ -23,7 +23,12 @@ class TestBaseCommand(TestCase):
         self.assertEqual(result.exit_code, 0)
         self.assertIn("syncgandidns, version ", result.output)
 
-    def test_invalid_ipv4_address(self):
-        result = self.runner.invoke(main.syncgandidns, ['--ipv4', 'localhost'])
+    def test_missing_domain(self):
+        result = self.runner.invoke(main.syncgandidns, [])
         self.assertEqual(result.exit_code, 2)
-        self.assertIn('Error: Invalid value for "-ipv4" / "--ipv4": localhost is not a valid IP address', result.output)
+        self.assertIn('Error: Missing argument "DOMAIN".', result.output)
+
+    def test_invalid_ipv4_address(self):
+        result = self.runner.invoke(main.syncgandidns, ['-ipv4', 'localhost'])
+        self.assertEqual(result.exit_code, 2)
+        self.assertIn('Error: Invalid value for "-ipv4": localhost is not a valid IP address', result.output)

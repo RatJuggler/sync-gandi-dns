@@ -12,9 +12,9 @@ IP_ADDRESS = IPAddressParamType()
     """)
 @click.version_option()
 @click.argument('domain', nargs=1, type=click.STRING, required=True)
-@click.option('-ipv4', '--ipv4', 'ipv4', type=IP_ADDRESS, show_default=True,
+@click.option('-ipv4', 'ipv4', type=IP_ADDRESS, show_default=True,
               help="The IPV4 address to update the domain DNS with.")
-@click.option('-ipv6', '--ipv6', 'ipv6', type=IP_ADDRESS, show_default=True,
+@click.option('-ipv6', 'ipv6', type=IP_ADDRESS, show_default=True,
               help="The IPV6 address to update the domain DNS with.")
 @click.option('-l', '--log-level', 'level', type=click.Choice(["DEBUG", "VERBOSE", "INFO", "WARNING"]),
               help="Show additional logging information.", default="INFO", show_default=True)
