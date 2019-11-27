@@ -2,16 +2,16 @@ from unittest import TestCase
 from click import BadParameter
 from ipaddress import IPv4Address
 
-from syncgandidns.ipaddress_param import IPAddressParamType
+from syncgandidns.ipaddress_param import IPv4AddressParamType
 
 
 class TestIPAddressParam(TestCase):
 
     def setUp(self):
-        self.param_type = IPAddressParamType()
+        self.param_type = IPv4AddressParamType()
 
     def test_name(self):
-        self.assertEqual(self.param_type.name, "ip_address")
+        self.assertEqual(self.param_type.name, "ipv4_address")
 
     def test_convert_type_error(self):
         with self.assertRaises(BadParameter):

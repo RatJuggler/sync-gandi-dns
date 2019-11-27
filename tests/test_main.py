@@ -31,4 +31,4 @@ class TestBaseCommand(TestCase):
     def test_invalid_ipv4_address(self):
         result = self.runner.invoke(main.syncgandidns, ['-ipv4', 'localhost'])
         self.assertEqual(result.exit_code, 2)
-        self.assertIn('Error: Invalid value for "-ipv4": localhost is not a valid IP address', result.output)
+        self.assertIn('Error: Invalid value for "-ipv4": localhost is not a valid IPV4 address', result.output)

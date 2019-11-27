@@ -2,9 +2,9 @@ import click
 import logging
 
 from .configure_logging import configure_logging
-from .ipaddress_param import IPAddressParamType
+from .ipaddress_param import IPv4AddressParamType
 
-IP_ADDRESS = IPAddressParamType()
+IP_ADDRESS = IPv4AddressParamType()
 
 
 @click.command(help="""
