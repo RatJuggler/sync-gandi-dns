@@ -1,0 +1,19 @@
+# PyCharm IDE
+.idea/*
+
+# Byte-compiled / optimized / DLL files
+__pycache__/
+
+# Distribution / packaging
+build/
+dist/
+.eggs/
+*.egg-info/
+
+# Unit test / coverage reports
+.tox/
+.coverage
+.pytest_cache/
+
+# Environments
+venv/
