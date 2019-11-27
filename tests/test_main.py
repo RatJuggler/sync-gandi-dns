@@ -32,3 +32,16 @@ class TestBaseCommand(TestCase):
         result = self.runner.invoke(main.syncgandidns, ['-ipv4', 'localhost'])
         self.assertEqual(result.exit_code, 2)
         self.assertIn('Error: Invalid value for "-ipv4": localhost is not a valid IPV4 address', result.output)
+
+    def test_invalid_ipv6_address(self):
+        result = self.runner.invoke(main.syncgandidns, ['-ipv6', 'localhost'])
+        self.assertEqual(result.exit_code, 2)
+        self.assertIn('Error: Invalid value for "-ipv6": localhost is not a valid IPV6 address', result.output)
+
+    def test_usage(self):
+        result = self.runner.invoke(main.syncgandidns, ['pickle.jar',
+                                                        '-ipv4', '192.168.0.1',
+                                                        '-ipv6', '2001:0db8:85a3:0000:0000:8a2e:0370:7334'])
+        self.assertEqual(result.exit_code, 0)
+        self.assertIn("Update DNS for 'pickle.jar' with IPV4 '192.168.0.1' and IV6 '2001:db8:85a3::8a2e:370:7334'.",
+                      result.output)
