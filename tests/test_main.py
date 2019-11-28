@@ -1,7 +1,9 @@
 from unittest import TestCase
+from testfixtures import LogCapture
 from click.testing import CliRunner
 
 import syncgandidns.__main__ as main
+import syncgandidns.configure_logging as cl
 
 
 class TestBaseCommand(TestCase):
@@ -44,11 +46,11 @@ class TestBaseCommand(TestCase):
         self.assertIn('Error: Invalid value for "-ipv6": localhost is not a valid IPV6 address', result.output)
 
     def test_usage(self):
-        result = self.runner.invoke(main.syncgandidns, ['pickle.jar',
-                                                        'secretpassword',
-                                                        '-ipv4', '192.168.0.1',
-                                                        '-ipv6', '2001:0db8:85a3:0000:0000:8a2e:0370:7334'])
+        expected = "Update DNS for 'pickle.jar' with IPV4 '192.168.0.1' and IV6 '2001:db8:85a3::8a2e:370:7334' using API key 'secretpassword'."
+        with LogCapture(level=cl.logging.INFO) as log_out:
+            result = self.runner.invoke(main.syncgandidns, ['pickle.jar',
+                                                            'secretpassword',
+                                                            '-ipv4', '192.168.0.1',
+                                                            '-ipv6', '2001:0db8:85a3:0000:0000:8a2e:0370:7334'])
         self.assertEqual(result.exit_code, 0)
-        self.assertIn("Update DNS for 'pickle.jar' with IPV4 '192.168.0.1' and IV6 '2001:db8:85a3::8a2e:370:7334' "
-                      "using API key 'secretpassword'.",
-                      result.output)
+        log_out.check(("root", cl.logging.getLevelName(cl.logging.INFO), expected))
