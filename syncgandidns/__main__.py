@@ -2,6 +2,7 @@ import click
 import logging
 
 from .configure_logging import configure_logging
+from .sync_ip_address import sync_ip_address
 from .ipv4address_param import IPv4AddressParamType
 from .ipv6address_param import IPv6AddressParamType
 
@@ -36,6 +37,7 @@ def syncgandidns(domain: str, apikey: str, ipv4: str, ipv6: str, level: str):
     configure_logging(level)
     logging.info("Update DNS for '{0}' with IPV4 '{1}' and IV6 '{2}' using API key '{3}'."
                  .format(domain, ipv4, ipv6, apikey))
+    sync_ip_address(domain, ipv4, ipv6, apikey)
 
 
 if __name__ == '__main__':
