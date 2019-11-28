@@ -28,6 +28,11 @@ class TestBaseCommand(TestCase):
         self.assertEqual(result.exit_code, 2)
         self.assertIn('Error: Missing argument "DOMAIN".', result.output)
 
+    def test_missing_apikey(self):
+        result = self.runner.invoke(main.syncgandidns, ['dinosaur.tea'])
+        self.assertEqual(result.exit_code, 2)
+        self.assertIn('Error: Missing argument "APIKEY".', result.output)
+
     def test_invalid_ipv4_address(self):
         result = self.runner.invoke(main.syncgandidns, ['-ipv4', 'localhost'])
         self.assertEqual(result.exit_code, 2)
@@ -40,8 +45,10 @@ class TestBaseCommand(TestCase):
 
     def test_usage(self):
         result = self.runner.invoke(main.syncgandidns, ['pickle.jar',
+                                                        'secretpassword',
                                                         '-ipv4', '192.168.0.1',
                                                         '-ipv6', '2001:0db8:85a3:0000:0000:8a2e:0370:7334'])
         self.assertEqual(result.exit_code, 0)
-        self.assertIn("Update DNS for 'pickle.jar' with IPV4 '192.168.0.1' and IV6 '2001:db8:85a3::8a2e:370:7334'.",
+        self.assertIn("Update DNS for 'pickle.jar' with IPV4 '192.168.0.1' and IV6 '2001:db8:85a3::8a2e:370:7334' "
+                      "using API key 'secretpassword'.",
                       result.output)
