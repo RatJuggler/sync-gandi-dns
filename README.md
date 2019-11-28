@@ -6,6 +6,11 @@ Once completed this Python script will allow the IP address records for a domain
 To keep it simple it will only update a single domain but can include updates to resource records for both IPV4 (`A`) 
 and IPV6 (`AAAA`).
 
+# Gandi API
+
+This uses the Gandi LiveDNS API documented [here](https://api.gandi.net/docs/livedns/). As of this update the API is 
+marked as (beta) but I've not experieced any issues with it.
+
 # Running
 
 ```
@@ -15,6 +20,8 @@ Usage: syncgandidns [OPTIONS] DOMAIN
   Sync a local dynamic IP address with a domain on Gandi DNS.
 
   DOMAIN: The domain to update the DNS for.
+
+  APIKEY: Your Gandi API key.
 
 Options:
   --version                       Show the version and exit.
