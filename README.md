@@ -6,10 +6,16 @@ Once completed this Python script will allow the IP address records for a domain
 To keep it simple it will only update a single domain but can include updates to resource records for both IPV4 (`A`) 
 and IPV6 (`AAAA`).
 
-# Gandi API
+# Gandi API Key
 
-This uses the Gandi LiveDNS API documented [here](https://api.gandi.net/docs/livedns/). As of this update the API is 
-marked as (beta) but I've not experieced any issues with it.
+This script uses the Gandi LiveDNS API documented [here](https://api.gandi.net/docs/livedns/) to query the current
+settings and make changes. As of this update the API is marked as (beta) but I've not experienced any issues with it.
+
+To access the API you need to obtain a key via the Security tab under "User Settings", 
+"Manage the user account and security settings".
+
+For development one of the tests requires access to a key and an accessible domain to show a working API call. These
+need to be set as the environment variables GANDI_API_KEY and GANDI_TEST_DOMAIN. No tests attempt to make any changes.
 
 # Running
 
