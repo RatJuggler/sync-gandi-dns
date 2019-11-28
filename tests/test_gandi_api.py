@@ -1,9 +1,9 @@
 import os
 
+from ipaddress import IPv4Address, IPv6Address, AddressValueError
+from requests import HTTPError
 from unittest import TestCase
-from testfixtures import LogCapture
 
-import syncgandidns.configure_logging as cl
 import syncgandidns.gandi_api as gandi_api
 
 
@@ -13,8 +13,20 @@ class TestGandiAPI(TestCase):
         self.API_KEY = os.getenv("GANDI_API_KEY")
         self.TEST_DOMAIN = os.getenv("GANDI_TEST_DOMAIN")
 
-    def test_get_domain_record_resource(self):
-        expected = "GET: " + gandi_api.URL + self.TEST_DOMAIN + "/records/@/A"
-        with LogCapture(level=cl.logging.INFO) as log_out:
-            gandi_api.get_domain_record_resource(self.API_KEY, self.TEST_DOMAIN, 'A')
-        log_out.check(("root", cl.logging.getLevelName(cl.logging.INFO), expected))
+    def test_get_domain_record_resource_value_unknown(self):
+        with self.assertRaises(HTTPError):
+            gandi_api.get_domain_record_resource_value(self.API_KEY, self.TEST_DOMAIN, 'UNKNOWN')
+
+    def test_get_domain_record_resource_value_a(self):
+        value = gandi_api.get_domain_record_resource_value(self.API_KEY, self.TEST_DOMAIN, 'A')
+        try:
+            return IPv4Address(value)
+        except AddressValueError:
+            self.fail("{0} is not a valid IPV4 address".format(value))
+
+    def test_get_domain_record_resource_value_aaaa(self):
+        value = gandi_api.get_domain_record_resource_value(self.API_KEY, self.TEST_DOMAIN, 'AAAA')
+        try:
+            return IPv6Address(value)
+        except AddressValueError:
+            self.fail("{0} is not a valid IPV6 address".format(value))
