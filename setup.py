@@ -29,7 +29,6 @@ setup(
         'coverage',
         'docutils',
         'flake8',
-        'mock',
         'testfixtures'
     ],
     license='MIT',

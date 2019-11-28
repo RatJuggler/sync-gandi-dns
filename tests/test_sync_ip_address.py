@@ -1,12 +1,11 @@
-import mock
-
 from unittest import TestCase
+from unittest.mock import patch
 
 from syncgandidns.sync_ip_address import sync_ip_address
 
 
-@mock.patch('syncgandidns.gandi_api.GandiAPI.get_domain_record_resource_value')
-@mock.patch('syncgandidns.gandi_api.GandiAPI.update_domain_record_resource')
+@patch('syncgandidns.gandi_api.GandiAPI.update_domain_record_resource')
+@patch('syncgandidns.gandi_api.GandiAPI.get_domain_record_resource_value')
 class TestSyncIPAddress(TestCase):
 
     def setUp(self):
