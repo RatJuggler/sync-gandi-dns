@@ -46,7 +46,8 @@ class TestBaseCommand(TestCase):
         self.assertIn('Error: Invalid value for "-ipv6": localhost is not a valid IPV6 address', result.output)
 
     def test_usage(self):
-        expected = "Update DNS for 'pickle.jar' with IPV4 '192.168.0.1' and IV6 '2001:db8:85a3::8a2e:370:7334' using API key 'secretpassword'."
+        expected = "Update DNS for 'pickle.jar' with IPV4 '192.168.0.1' and IV6 '2001:db8:85a3::8a2e:370:7334' using " \
+                   "API key 'secretpassword'."
         with LogCapture(level=cl.logging.INFO) as log_out:
             result = self.runner.invoke(main.syncgandidns, ['pickle.jar',
                                                             'secretpassword',
