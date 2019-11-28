@@ -11,7 +11,7 @@ IPV6_ADDRESS = IPv6AddressParamType()
 
 @click.command(help="""
     Sync a local dynamic IP address with a Gandi DNS domain entry.\n
-    DOMAIN: The domain to update the DNS for.
+    DOMAIN: The domain to update the DNS for.\n
     APIKEY: Your Gandi API key.
     """)
 @click.version_option()
