@@ -21,8 +21,8 @@ setup(
     },
     install_requires=[
         # Check latest releases on piwheels: https://www.piwheels.hostedpi.com/
-        'click ==7.0',
-        'requests ==2.21.0'
+        'click ==7.1.1',
+        'requests ==2.23.0'
     ],
     test_suite='tests',
     tests_require=[
