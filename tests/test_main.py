@@ -29,22 +29,22 @@ class TestBaseCommand(TestCase):
     def test_missing_domain(self):
         result = self.runner.invoke(main.syncgandidns, [])
         self.assertEqual(result.exit_code, 2)
-        self.assertIn('Error: Missing argument "DOMAIN".', result.output)
+        self.assertIn('Error: Missing argument \'DOMAIN\'.', result.output)
 
     def test_missing_apikey(self):
         result = self.runner.invoke(main.syncgandidns, ['dinosaur.tea'])
         self.assertEqual(result.exit_code, 2)
-        self.assertIn('Error: Missing argument "APIKEY".', result.output)
+        self.assertIn('Error: Missing argument \'APIKEY\'.', result.output)
 
     def test_invalid_ipv4_address(self):
         result = self.runner.invoke(main.syncgandidns, ['-ipv4', 'localhost'])
         self.assertEqual(result.exit_code, 2)
-        self.assertIn('Error: Invalid value for "-ipv4": localhost is not a valid IPV4 address', result.output)
+        self.assertIn('Error: Invalid value for \'-ipv4\': localhost is not a valid IPV4 address', result.output)
 
     def test_invalid_ipv6_address(self):
         result = self.runner.invoke(main.syncgandidns, ['-ipv6', 'localhost'])
         self.assertEqual(result.exit_code, 2)
-        self.assertIn('Error: Invalid value for "-ipv6": localhost is not a valid IPV6 address', result.output)
+        self.assertIn('Error: Invalid value for \'-ipv6\': localhost is not a valid IPV6 address', result.output)
 
     @patch('syncgandidns.__main__.sync_ip_address')
     def test_usage(self, sync_ip_address_mock):
