@@ -1,5 +1,5 @@
 from unittest import TestCase
-from unittest.mock import patch
+from unittest.mock import patch, MagicMock
 from testfixtures import LogCapture
 from click.testing import CliRunner
 
@@ -7,7 +7,7 @@ import syncgandidns.__main__ as main
 import syncgandidns.configure_logging as cl
 
 
-def _init_log_check(log_out, expected1, expected2, expected3):
+def _init_log_check(log_out: LogCapture, expected1: str, expected2: str, expected3: str):
     root = 'root'
     log_level = cl.logging.getLevelName(cl.logging.INFO)
     log_out.check_present((root, log_level, expected1),
@@ -55,7 +55,7 @@ class TestBaseCommand(TestCase):
         self.assertIn('Error: Invalid value for \'-ipv6\': localhost is not a valid IPV6 address', result.output)
 
     @patch('syncgandidns.__main__.sync_ip_address')
-    def test_automatic(self, sync_ip_address_mock):
+    def test_automatic(self, sync_ip_address_mock: MagicMock):
         expected1 = "Updating DNS for domain 'pickle.jar'..."
         expected2 = "Using IPV4 '<automatic lookup>'..."
         expected3 = "Using IPV6 '<automatic lookup>'..."
@@ -67,7 +67,7 @@ class TestBaseCommand(TestCase):
         sync_ip_address_mock.assert_called_once()
 
     @patch('syncgandidns.__main__.sync_ip_address')
-    def test_override_both(self, sync_ip_address_mock):
+    def test_override_both(self, sync_ip_address_mock: MagicMock):
         expected1 = "Updating DNS for domain 'pickle.jar'..."
         expected2 = "Using IPV4 '192.168.0.1'..."
         expected3 = "Using IPV6 '2001:db8:85a3::8a2e:370:7334'..."
@@ -81,7 +81,7 @@ class TestBaseCommand(TestCase):
         sync_ip_address_mock.assert_called_once()
 
     @patch('syncgandidns.__main__.sync_ip_address')
-    def test_debug_log(self, sync_ip_address_mock):
+    def test_debug_log(self, sync_ip_address_mock: MagicMock):
         expected1 = "Updating DNS for domain 'jam.jar'..."
         expected2 = "Using IPV4 '<automatic lookup>'..."
         expected3 = "Using IPV6 '2701:db8:86a3::8a3e:371:7734'..."
