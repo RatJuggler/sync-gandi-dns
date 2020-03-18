@@ -1,4 +1,6 @@
 import logging
+from typing import Dict
+
 import requests
 
 
@@ -8,17 +10,18 @@ RECORDS = "/records/@/"
 
 class GandiAPI:
 
-    def __init__(self, api_key: str, domain: str):
+    def __init__(self, api_key: str, domain: str) -> None:
         self.api_key = api_key
         self.domain = domain
 
-    def get_rest_url(self, resource: str):
+    def get_rest_url(self, resource: str) -> str:
         return URL + self.domain + RECORDS + resource
 
-    def get_headers(self):
+    def get_headers(self) -> Dict[str, str]:
         return {"Authorization": "Apikey " + self.api_key}
 
-    def get_update(self, resource: str, value: str):
+    @staticmethod
+    def get_update(resource: str, value: str) -> str:
         return '{"rrset_type": {0}, "rrset_values": ["{1}"]}'.format(resource, value)
 
     def get_domain_record_resource_value(self, resource: str) -> str:
@@ -34,7 +37,7 @@ class GandiAPI:
             value = values[0]
         return value
 
-    def update_domain_record_resource(self, resource: str, value: str):
+    def update_domain_record_resource(self, resource: str, value: str) -> None:
         response = requests.get(self.get_rest_url(resource),
                                 headers=self.get_headers(),
                                 data=self.get_update(resource, value),

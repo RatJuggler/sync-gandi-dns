@@ -3,7 +3,7 @@ import logging
 from .gandi_api import GandiAPI
 
 
-def sync_ip_address(domain, ipv4, ipv6, apikey):
+def sync_ip_address(domain: str, ipv4: str, ipv6: str, apikey: str) -> None:
     gandi_api = GandiAPI(apikey, domain)
     current_ipv4 = gandi_api.get_domain_record_resource_value('A')
     current_ipv6 = gandi_api.get_domain_record_resource_value('AAAA')

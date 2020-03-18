@@ -26,7 +26,7 @@ IPV6_ADDRESS = IPv6AddressParamType()
               help='Override the IPV6 address to update the domain DNS with.')
 @click.option('-l', '--log-level', 'level', type=click.Choice(['DEBUG', 'VERBOSE', 'INFO', 'WARNING']),
               help='Show additional logging information.', default='INFO', show_default=True)
-def syncgandidns(domain: str, apikey: str, ipv4: str, ipv6: str, level: str):
+def syncgandidns(domain: str, apikey: str, ipv4: str, ipv6: str, level: str) -> None:
     """
     Sync local dynamic IP address with Gandi DNS.
     :param domain: To sync IP address for
