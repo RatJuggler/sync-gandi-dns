@@ -6,7 +6,7 @@ with open("README.md", "r") as fh:
 setup(
     name='syncgandidns',
     version='0.0.1',
-    description='Sync a local dynamic IP address with a Gandi DNS domain entry.',
+    description='Sync a dynamic IP address with a Gandi DNS domain entry.',
     long_description=long_description,
     long_description_content_type='text/markdown',
     author='John Chase',
@@ -36,7 +36,7 @@ setup(
         # Trove classifiers
         # Full list: https://pypi.python.org/pypi?%3Aaction=list_classifiers
         'License :: OSI Approved :: MIT License',
-        'Development Status :: 1 - Planning',
+        'Development Status :: 3 - Alpha',
         'Programming Language :: Python :: 3.5',
         'Operating System :: POSIX :: Linux',
         'Topic :: Internet :: Name Service (DNS)'
