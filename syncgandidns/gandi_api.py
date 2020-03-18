@@ -27,7 +27,7 @@ class GandiAPI:
     def get_domain_record_resource_value(self, resource: str) -> str:
         response = requests.get(self.get_rest_url(resource),
                                 headers=self.get_headers(),
-                                timeout=3)
+                                timeout=4)
         logging.debug(response)
         response.raise_for_status()
         logging.debug(response.json())
