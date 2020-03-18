@@ -9,9 +9,10 @@ import syncgandidns.configure_logging as cl
 
 def _init_log_check(log_out, expected1, expected2, expected3):
     root = 'root'
-    log_out.check((root, cl.logging.getLevelName(cl.logging.INFO), expected1),
-                  (root, cl.logging.getLevelName(cl.logging.INFO), expected2),
-                  (root, cl.logging.getLevelName(cl.logging.INFO), expected3))
+    log_level = cl.logging.getLevelName(cl.logging.INFO)
+    log_out.check_present((root, log_level, expected1),
+                          (root, log_level, expected2),
+                          (root, log_level, expected3))
 
 
 class TestBaseCommand(TestCase):
@@ -77,4 +78,19 @@ class TestBaseCommand(TestCase):
                                                             '-ipv6', '2001:0db8:85a3:0000:0000:8a2e:0370:7334'])
         self.assertEqual(result.exit_code, 0)
         _init_log_check(log_out, expected1, expected2, expected3)
+        sync_ip_address_mock.assert_called_once()
+
+    @patch('syncgandidns.__main__.sync_ip_address')
+    def test_debug_log(self, sync_ip_address_mock):
+        expected1 = "Updating DNS for domain 'jam.jar'..."
+        expected2 = "Using IPV4 '<automatic lookup>'..."
+        expected3 = "Using IPV6 '2701:db8:86a3::8a3e:371:7734'..."
+        debug = "Using API key 'secretpassword'..."
+        with LogCapture(level=cl.logging.DEBUG) as log_out:
+            result = self.runner.invoke(main.syncgandidns, ['jam.jar',
+                                                            'secretpassword',
+                                                            '-ipv6', '2701:db8:86a3::8a3e:371:7734'])
+        self.assertEqual(result.exit_code, 0)
+        _init_log_check(log_out, expected1, expected2, expected3)
+        log_out.check_present(('root', cl.logging.getLevelName(cl.logging.DEBUG), debug))
         sync_ip_address_mock.assert_called_once()
