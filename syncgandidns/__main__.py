@@ -22,7 +22,7 @@ IPV6_ADDRESS = IPv6AddressParamType()
               help='Update the domain DNS with an IPV4 address obtained automatically.')
 @click.option('-ipv4', 'ipv4', type=IPV4_ADDRESS,
               help='Override the IPV4 address to update the domain DNS with.')
-@click.option('-auto-ipv4', 'autov6', default=True, is_flag=True, show_default=True,
+@click.option('-auto-ipv6', 'autov6', default=True, is_flag=True, show_default=True,
               help='Update the domain DNS with an IPV6 address obtained automatically.')
 @click.option('-ipv6', 'ipv6', type=IPV6_ADDRESS,
               help='Override the IPV6 address to update the domain DNS with.')

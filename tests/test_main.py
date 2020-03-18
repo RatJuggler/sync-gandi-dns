@@ -7,6 +7,13 @@ import syncgandidns.__main__ as main
 import syncgandidns.configure_logging as cl
 
 
+def _init_log_check(log_out, expected1, expected2, expected3):
+    root = 'root'
+    log_out.check((root, cl.logging.getLevelName(cl.logging.INFO), expected1),
+                  (root, cl.logging.getLevelName(cl.logging.INFO), expected2),
+                  (root, cl.logging.getLevelName(cl.logging.INFO), expected3))
+
+
 class TestBaseCommand(TestCase):
 
     def setUp(self):
@@ -16,7 +23,9 @@ class TestBaseCommand(TestCase):
         result = self.runner.invoke(main.syncgandidns, ['--help'])
         self.assertEqual(result.exit_code, 0)
         self.assertIn(" --version ", result.output)
+        self.assertIn(" -auto-ipv4 ", result.output)
         self.assertIn(" -ipv4 ", result.output)
+        self.assertIn(" -auto-ipv6 ", result.output)
         self.assertIn(" -ipv6 ", result.output)
         self.assertIn(" --log-level ", result.output)
         self.assertIn(" --help ", result.output)
@@ -47,8 +56,19 @@ class TestBaseCommand(TestCase):
         self.assertIn('Error: Invalid value for \'-ipv6\': localhost is not a valid IPV6 address', result.output)
 
     @patch('syncgandidns.__main__.sync_ip_address')
-    def test_usage(self, sync_ip_address_mock):
-        root = 'root'
+    def test_automatic(self, sync_ip_address_mock):
+        expected1 = "Updating DNS for domain 'pickle.jar'..."
+        expected2 = "Using IPV4 '<automatic lookup>'..."
+        expected3 = "Using IPV6 '<automatic lookup>'..."
+        with LogCapture(level=cl.logging.INFO) as log_out:
+            result = self.runner.invoke(main.syncgandidns, ['pickle.jar',
+                                                            'secretpassword'])
+        self.assertEqual(result.exit_code, 0)
+        _init_log_check(log_out, expected1, expected2, expected3)
+        sync_ip_address_mock.assert_called_once()
+
+    @patch('syncgandidns.__main__.sync_ip_address')
+    def test_override_both(self, sync_ip_address_mock):
         expected1 = "Updating DNS for domain 'pickle.jar'..."
         expected2 = "Using IPV4 '192.168.0.1'..."
         expected3 = "Using IPV6 '2001:db8:85a3::8a2e:370:7334'..."
@@ -58,7 +78,5 @@ class TestBaseCommand(TestCase):
                                                             '-ipv4', '192.168.0.1',
                                                             '-ipv6', '2001:0db8:85a3:0000:0000:8a2e:0370:7334'])
         self.assertEqual(result.exit_code, 0)
-        log_out.check((root, cl.logging.getLevelName(cl.logging.INFO), expected1),
-                      (root, cl.logging.getLevelName(cl.logging.INFO), expected2),
-                      (root, cl.logging.getLevelName(cl.logging.INFO), expected3))
+        _init_log_check(log_out, expected1, expected2, expected3)
         sync_ip_address_mock.assert_called_once()
