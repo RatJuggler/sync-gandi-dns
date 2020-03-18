@@ -7,20 +7,20 @@ from syncgandidns.ipv4address_param import IPv4AddressParamType
 
 class TestIPv4AddressParam(TestCase):
 
-    def setUp(self):
+    def setUp(self) -> None:
         self.param_type = IPv4AddressParamType()
 
-    def test_name(self):
+    def test_name(self) -> None:
         self.assertEqual(self.param_type.name, "ipv4_address")
 
-    def test_convert_type_error(self):
+    def test_convert_type_error(self) -> None:
         with self.assertRaises(BadParameter):
             self.param_type.convert(127.001, "dummy", None)
 
-    def test_convert_value_error(self):
+    def test_convert_value_error(self) -> None:
         with self.assertRaises(BadParameter):
             self.param_type.convert("localhost", "dummy", None)
 
-    def test_convert_valid(self):
+    def test_convert_valid(self) -> None:
         convert = self.param_type.convert("8.8.8.8", "dummy", None)
         self.assertIsInstance(convert, IPv4Address)
