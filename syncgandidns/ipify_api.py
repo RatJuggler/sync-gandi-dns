@@ -8,7 +8,7 @@ IPV6_URL = 'https://api6.ipify.org'
 
 def _get_ip_address(api_url: str):
     response = requests.get(api_url,
-                            timeout=3)
+                            timeout=4)
     logging.debug(response)
     response.raise_for_status()
     return response.text
