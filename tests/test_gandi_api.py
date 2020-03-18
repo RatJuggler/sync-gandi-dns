@@ -19,15 +19,15 @@ class TestGandiAPI(TestCase):
             self.GANDI_API.get_domain_record_resource_value('UNKNOWN')
 
     def test_get_domain_record_resource_value_a(self):
-        value = self.GANDI_API.get_domain_record_resource_value('A')
+        ipv4 = self.GANDI_API.get_domain_record_resource_value('A')
         try:
-            return IPv4Address(value)
+            return IPv4Address(ipv4)
         except AddressValueError:
-            self.fail("{0} is not a valid IPV4 address".format(value))
+            self.fail("{0} is not a valid IPV4 address".format(ipv4))
 
     def test_get_domain_record_resource_value_aaaa(self):
-        value = self.GANDI_API.get_domain_record_resource_value('AAAA')
+        ipv6 = self.GANDI_API.get_domain_record_resource_value('AAAA')
         try:
-            return IPv6Address(value)
+            return IPv6Address(ipv6)
         except AddressValueError:
-            self.fail("{0} is not a valid IPV6 address".format(value))
+            self.fail("{0} is not a valid IPV6 address".format(ipv6))
