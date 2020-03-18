@@ -48,13 +48,17 @@ class TestBaseCommand(TestCase):
 
     @patch('syncgandidns.__main__.sync_ip_address')
     def test_usage(self, sync_ip_address_mock):
-        expected = "Update DNS for 'pickle.jar' with IPV4 '192.168.0.1' and IV6 '2001:db8:85a3::8a2e:370:7334' using " \
-                   "API key 'secretpassword'."
+        root = 'root'
+        expected1 = "Updating DNS for domain 'pickle.jar'..."
+        expected2 = "Using IPV4 '192.168.0.1'..."
+        expected3 = "Using IPV6 '2001:db8:85a3::8a2e:370:7334'..."
         with LogCapture(level=cl.logging.INFO) as log_out:
             result = self.runner.invoke(main.syncgandidns, ['pickle.jar',
                                                             'secretpassword',
                                                             '-ipv4', '192.168.0.1',
                                                             '-ipv6', '2001:0db8:85a3:0000:0000:8a2e:0370:7334'])
         self.assertEqual(result.exit_code, 0)
-        log_out.check(("root", cl.logging.getLevelName(cl.logging.INFO), expected))
+        log_out.check((root, cl.logging.getLevelName(cl.logging.INFO), expected1),
+                      (root, cl.logging.getLevelName(cl.logging.INFO), expected2),
+                      (root, cl.logging.getLevelName(cl.logging.INFO), expected3))
         sync_ip_address_mock.assert_called_once()

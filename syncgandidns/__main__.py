@@ -41,8 +41,10 @@ def syncgandidns(domain: str, apikey: str, autov4: bool, ipv4: str, autov6: bool
     :return: No meaningful return
     """
     configure_logging(level)
-    logging.info("Update DNS for '{0}' with IPV4 '{1}' and IV6 '{2}' using API key '{3}'."
-                 .format(domain, ipv4, ipv6, apikey))
+    logging.info("Updating DNS for domain '{0}'...".format(domain))
+    logging.debug("Using API key '{0}'...".format(apikey))
+    logging.info("Using IPV4 '{0}'...".format('<automatic lookup>' if ipv4 is None else ipv4))
+    logging.info("Using IPV6 '{0}'...".format('<automatic lookup>' if ipv6 is None else ipv6))
     sync_ip_address(domain, ipv4, ipv6, apikey)
 
 
