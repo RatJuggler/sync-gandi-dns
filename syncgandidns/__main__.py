@@ -11,31 +11,26 @@ IPV6_ADDRESS = IPv6AddressParamType()
 
 
 @click.command(help='''
-    Sync a local dynamic IP address with a Gandi DNS domain entry.\n
+    Sync a dynamic IP address (V4 & V6) with a Gandi DNS domain entry.\n
+    The external IP address is determined automatically.\n 
     DOMAIN: The domain to update the DNS for.\n
     APIKEY: Your Gandi API key.
     ''')
 @click.version_option()
 @click.argument('domain', nargs=1, type=click.STRING, required=True)
 @click.argument('apikey', nargs=1, type=click.STRING, required=True)
-@click.option('-auto-ipv4', 'autov4', default=True, is_flag=True, show_default=True,
-              help='Update the domain DNS with an IPV4 address obtained automatically.')
 @click.option('-ipv4', 'ipv4', type=IPV4_ADDRESS,
               help='Override the IPV4 address to update the domain DNS with.')
-@click.option('-auto-ipv6', 'autov6', default=True, is_flag=True, show_default=True,
-              help='Update the domain DNS with an IPV6 address obtained automatically.')
 @click.option('-ipv6', 'ipv6', type=IPV6_ADDRESS,
               help='Override the IPV6 address to update the domain DNS with.')
 @click.option('-l', '--log-level', 'level', type=click.Choice(['DEBUG', 'VERBOSE', 'INFO', 'WARNING']),
               help='Show additional logging information.', default='INFO', show_default=True)
-def syncgandidns(domain: str, apikey: str, autov4: bool, ipv4: str, autov6: bool, ipv6: str, level: str):
+def syncgandidns(domain: str, apikey: str, ipv4: str, ipv6: str, level: str):
     """
     Sync local dynamic IP address with Gandi DNS.
     :param domain: To sync IP address for
     :param apikey: To access the API with
-    :param autov4: Automatically update
     :param ipv4: To sync to the domain DNS
-    :param autov6: Automatically update
     :param ipv6: To sync to the domain DNS
     :param level: Set a logging level; DEBUG, VERBOSE, INFO or WARNING
     :return: No meaningful return
