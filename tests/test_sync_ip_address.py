@@ -1,13 +1,22 @@
+from testfixtures import LogCapture
 from unittest import TestCase
 from unittest.mock import patch
 
 from syncgandidns.sync_ip_address import sync_ip_address
+import syncgandidns.configure_logging as cl
 
 DUMMY_IPV4 = "86.144.65.49"
 DUMMY_IPV6 = "2a00:23c6:290c:2700:3bf1:5e62:c213:89ce"
 DUMMY_DOMAIN = "test.domain"
 DUMMY_API_KEY = "secretpassword"
 NO_MATCH = "nomatch"
+
+
+def _log_check(log_out: LogCapture, expected1: str, expected2: str) -> None:
+    root = 'root'
+    log_level = cl.logging.getLevelName(cl.logging.INFO)
+    log_out.check_present((root, log_level, expected1),
+                          (root, log_level, expected2))
 
 
 @patch('syncgandidns.gandi_api.GandiAPI.update_ipv4_address')
@@ -26,11 +35,15 @@ class TestSyncIPAddress(TestCase):
                                        update_ipv4_address_mock) -> None:
         get_ipv6_address_mock.return_value = DUMMY_IPV6
         get_ipv4_address_mock.return_value = DUMMY_IPV4
-        sync_ip_address(DUMMY_DOMAIN, DUMMY_IPV4, DUMMY_IPV6, DUMMY_API_KEY)
+        expected1 = "Current: IPV4 = {0}, IPV6 = {1}".format(DUMMY_IPV4, DUMMY_IPV6)
+        expected2 = "IPV4 already current so not updated."
+        with LogCapture(level=cl.logging.INFO) as log_out:
+            sync_ip_address(DUMMY_DOMAIN, DUMMY_IPV4, DUMMY_IPV6, DUMMY_API_KEY)
         self.assertEqual(1, get_ipv6_address_mock.call_count)
         self.assertEqual(1, get_ipv4_address_mock.call_count)
         self.assertEqual(0, update_ipv6_address_mock.call_count)
         self.assertEqual(0, update_ipv4_address_mock.call_count)
+        _log_check(log_out, expected1, expected2)
 
     def test_sync_ip_address_change_both(self,
                                          get_ipv6_address_mock,
@@ -39,11 +52,15 @@ class TestSyncIPAddress(TestCase):
                                          update_ipv4_address_mock) -> None:
         get_ipv6_address_mock.return_value = NO_MATCH
         get_ipv4_address_mock.return_value = NO_MATCH
-        sync_ip_address(DUMMY_DOMAIN, DUMMY_IPV4, DUMMY_IPV6, DUMMY_API_KEY)
+        expected1 = "Current: IPV4 = {0}, IPV6 = {1}".format(NO_MATCH, NO_MATCH)
+        expected2 = "IPV4 updated to: {0}".format(DUMMY_IPV4)
+        with LogCapture(level=cl.logging.INFO) as log_out:
+            sync_ip_address(DUMMY_DOMAIN, DUMMY_IPV4, DUMMY_IPV6, DUMMY_API_KEY)
         self.assertEqual(1, get_ipv6_address_mock.call_count)
         self.assertEqual(1, get_ipv4_address_mock.call_count)
         self.assertEqual(1, update_ipv6_address_mock.call_count)
         self.assertEqual(1, update_ipv4_address_mock.call_count)
+        _log_check(log_out, expected1, expected2)
 
     def test_sync_ip_address_change_ipv4(self,
                                          get_ipv6_address_mock,
@@ -52,11 +69,15 @@ class TestSyncIPAddress(TestCase):
                                          update_ipv4_address_mock) -> None:
         get_ipv6_address_mock.return_value = DUMMY_IPV6
         get_ipv4_address_mock.return_value = NO_MATCH
-        sync_ip_address(DUMMY_DOMAIN, DUMMY_IPV4, DUMMY_IPV6, DUMMY_API_KEY)
+        expected1 = "Current: IPV4 = {0}, IPV6 = {1}".format(NO_MATCH, DUMMY_IPV6)
+        expected2 = "IPV4 updated to: {0}".format(DUMMY_IPV4)
+        with LogCapture(level=cl.logging.INFO) as log_out:
+            sync_ip_address(DUMMY_DOMAIN, DUMMY_IPV4, DUMMY_IPV6, DUMMY_API_KEY)
         self.assertEqual(1, get_ipv6_address_mock.call_count)
         self.assertEqual(1, get_ipv4_address_mock.call_count)
         self.assertEqual(0, update_ipv6_address_mock.call_count)
         self.assertEqual(1, update_ipv4_address_mock.call_count)
+        _log_check(log_out, expected1, expected2)
 
     def test_sync_ip_address_change_ipv6(self,
                                          get_ipv6_address_mock,
@@ -65,8 +86,12 @@ class TestSyncIPAddress(TestCase):
                                          update_ipv4_address_mock) -> None:
         get_ipv6_address_mock.return_value = NO_MATCH
         get_ipv4_address_mock.return_value = DUMMY_IPV4
-        sync_ip_address(DUMMY_DOMAIN, DUMMY_IPV4, DUMMY_IPV6, DUMMY_API_KEY)
+        expected1 = "Current: IPV4 = {0}, IPV6 = {1}".format(DUMMY_IPV4, NO_MATCH)
+        expected2 = "IPV4 already current so not updated."
+        with LogCapture(level=cl.logging.INFO) as log_out:
+            sync_ip_address(DUMMY_DOMAIN, DUMMY_IPV4, DUMMY_IPV6, DUMMY_API_KEY)
         self.assertEqual(1, get_ipv6_address_mock.call_count)
         self.assertEqual(1, get_ipv4_address_mock.call_count)
         self.assertEqual(1, update_ipv6_address_mock.call_count)
         self.assertEqual(0, update_ipv4_address_mock.call_count)
+        _log_check(log_out, expected1, expected2)
