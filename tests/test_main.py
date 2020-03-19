@@ -77,8 +77,8 @@ class TestBaseCommand(TestCase):
     @patch('syncgandidns.__main__.sync_ip_address')
     def test_automatic(self, sync_ip_address_mock: MagicMock) -> None:
         expected1 = "Updating DNS for domain: pickle.jar"
-        expected2 = "Using IPV4: <automatic lookup>"
-        expected3 = "Using IPV6: <automatic lookup>"
+        expected2 = "Update IPV4 to: <automatic lookup>"
+        expected3 = "Update IPV6 to: <automatic lookup>"
         with LogCapture(level=cl.logging.INFO) as log_out:
             result = self.runner.invoke(main.syncgandidns, ['pickle.jar',
                                                             'secretpassword'])
@@ -91,8 +91,8 @@ class TestBaseCommand(TestCase):
     @patch('syncgandidns.__main__.sync_ip_address')
     def test_override_both(self, sync_ip_address_mock: MagicMock) -> None:
         expected1 = "Updating DNS for domain: pickle.jar"
-        expected2 = "Using IPV4: 192.168.0.1"
-        expected3 = "Using IPV6: 2001:db8:85a3::8a2e:370:7334"
+        expected2 = "Update IPV4 to: 192.168.0.1"
+        expected3 = "Update IPV6 to: 2001:db8:85a3::8a2e:370:7334"
         with LogCapture(level=cl.logging.INFO) as log_out:
             result = self.runner.invoke(main.syncgandidns, ['pickle.jar',
                                                             'secretpassword',
@@ -105,8 +105,8 @@ class TestBaseCommand(TestCase):
     @patch('syncgandidns.__main__.sync_ip_address')
     def test_debug_log(self, sync_ip_address_mock: MagicMock) -> None:
         expected1 = "Updating DNS for domain: jam.jar"
-        expected2 = "Using IPV4: <automatic lookup>"
-        expected3 = "Using IPV6: 2701:db8:86a3::8a3e:371:7734"
+        expected2 = "Update IPV4 to: <automatic lookup>"
+        expected3 = "Update IPV6 to: 2701:db8:86a3::8a3e:371:7734"
         debug = "Using API key: secretpassword"
         with LogCapture(level=cl.logging.DEBUG) as log_out:
             result = self.runner.invoke(main.syncgandidns, ['jam.jar',
