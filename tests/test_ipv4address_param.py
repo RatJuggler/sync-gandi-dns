@@ -13,6 +13,12 @@ class TestIPv4AddressParam(TestCase):
     def test_name(self) -> None:
         self.assertEqual(self.param_type.name, "ipv4_address")
 
+    def test_validate_valid(self) -> None:
+        self.assertIsInstance(self.param_type.validate('127.0.0.1'), IPv4Address)
+
+    def test_validate_invalid(self) -> None:
+        self.assertIsNone(self.param_type.validate('127.0.0'))
+
     def test_convert_type_error(self) -> None:
         with self.assertRaises(BadParameter):
             self.param_type.convert(127.001, "dummy", None)
@@ -24,3 +30,7 @@ class TestIPv4AddressParam(TestCase):
     def test_convert_valid(self) -> None:
         convert = self.param_type.convert("8.8.8.8", "dummy", None)
         self.assertIsInstance(convert, IPv4Address)
+
+    def test_convert_invalid(self) -> None:
+        with self.assertRaises(BadParameter):
+            self.param_type.convert("8.8.8", "dummy", None)

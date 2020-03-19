@@ -8,7 +8,7 @@ import syncgandidns.__main__ as main
 import syncgandidns.configure_logging as cl
 
 
-def _init_log_check(log_out: LogCapture, expected1: str, expected2: str, expected3: str):
+def _init_log_check(log_out: LogCapture, expected1: str, expected2: str, expected3: str) -> None:
     root = 'root'
     log_level = cl.logging.getLevelName(cl.logging.INFO)
     log_out.check_present((root, log_level, expected1),

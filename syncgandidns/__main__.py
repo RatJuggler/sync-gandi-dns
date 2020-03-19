@@ -43,6 +43,9 @@ def syncgandidns(domain: str, apikey: str, ipv4: str, ipv6: str, level: str) -> 
     if ipv4 is None:
         ipv4 = get_ipv4_address()
         logging.info("...found: {0}".format(ipv4))
+        if IPV4_ADDRESS.validate(ipv4) is None:
+            logging.info("...not valid IPV4 won't update.")
+            ipv4 = None
     logging.info("Update IPV6 to: {0}".format('<automatic lookup>' if ipv6 is None else ipv6))
     if ipv6 is None:
         ipv6 = get_ipv6_address()
