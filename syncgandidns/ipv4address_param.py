@@ -1,6 +1,5 @@
-from typing import Optional
-
 from click import ParamType
+from typing import Optional
 from ipaddress import IPv4Address, AddressValueError
 
 
