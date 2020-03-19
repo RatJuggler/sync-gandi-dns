@@ -24,7 +24,7 @@ class GandiAPI:
 
     @staticmethod
     def get_update(resource: str, value: str) -> str:
-        return '{"rrset_type": {0}, "rrset_values": ["{1}"]}'.format(resource, value)
+        return '{{"rrset_type": {0}, "rrset_values": ["{1}"]}}'.format(resource, value)
 
     def _get_domain_record_resource_value(self, resource: str) -> str:
         response = requests.get(self.get_rest_url(resource),
