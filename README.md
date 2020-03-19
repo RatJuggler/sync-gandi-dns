@@ -1,21 +1,37 @@
 # sync-gandi-dns
 
-This is a simple Python package which allows the IP address records for a domain registered with 
-[Gandi](https://www.gandi.net) to be kept up to date with the dynamic values assigned by your ISP.
+This is a simple Python package which allows the IP address records for a domain registered with [Gandi](https://www.gandi.net)
+to be kept up to date with the dynamic values assigned by your ISP.
 
-To keep it simple it will only update a single domain but can include updates to resource records for both IPV4 (`A`) 
-and IPV6 (`AAAA`).
+To keep it simple it will only update a single domain but can include updates to resource records for both IPV4 (`A`) and IPV6 
+(`AAAA`).
 
-# Gandi API Key
+# How it works
 
-This script uses the Gandi LiveDNS API documented [here](https://api.gandi.net/docs/livedns/) to query the current
-settings and make changes. As of this update the API is marked as (beta) but I've not experienced any issues with it.
+It uses the Gandi LiveDNS API documented [here](https://api.gandi.net/docs/livedns/) to query the current settings and make 
+changes. The API is marked as (beta) but I've not experienced any issues with it.
 
 To access the API you need to obtain a key via the Security tab under "User Settings", 
 "Manage the user account and security settings".
 
-For development one of the tests requires access to a key and an accessible domain to show a working API call. These
-need to be set as the environment variables GANDI_API_KEY and GANDI_TEST_DOMAIN. No tests attempt to make any changes.
+For development one of the tests requires access to a key and an accessible domain to show a working API call. These need to be
+set as the environment variables GANDI_API_KEY and GANDI_TEST_DOMAIN. No tests attempt to make any changes.
+
+Of course it also needs to find out what the latest IP address is before deciding if a an update is required. To do this it uses
+the [ipify API](https://www.ipify.org/) which provides simple endpoints for finding your external [IPV4](https://api.ipify.org)
+and [IPV6](https://api6.ipify.org) address.
+
+# Installing
+
+Checkout the source code from here:
+```
+$ git clone https://github.com/RatJuggler/sync-gandi-dns.git
+$ cd sync-gandi-dns
+```
+Then install/update as a Python package:
+```
+$ sudo pip3 install -U .
+```
 
 # Running
 
