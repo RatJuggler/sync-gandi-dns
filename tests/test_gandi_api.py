@@ -16,7 +16,7 @@ class TestGandiAPI(TestCase):
 
     def test_get_domain_record_resource_value_unknown(self) -> None:
         with self.assertRaises(HTTPError):
-            self.GANDI_API.get_domain_record_resource_value('UNKNOWN')
+            self.GANDI_API._get_domain_record_resource_value('UNKNOWN')
 
     def test_get_ipv4_address(self) -> None:
         ipv4 = self.GANDI_API.get_ipv4_address()
