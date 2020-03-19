@@ -5,7 +5,7 @@ import requests
 
 
 URL = "https://api.gandi.net/v5/livedns/domains/"
-RECORDS = "/records/@/"
+RECORDS = "/records/@/"  # @ is the DNS record name.
 A_RECORD = 'A'
 AAAA_RECORD = 'AAAA'
 
