@@ -10,13 +10,6 @@ DUMMY_API_KEY = "secretpassword"
 NO_MATCH = "nomatch"
 
 
-def dummy_get_domain_record_resource_value(resource: str) -> str:
-    if resource == 'A':
-        return DUMMY_IPV4
-    if resource == 'AAAA':
-        return DUMMY_IPV6
-
-
 @patch('syncgandidns.gandi_api.GandiAPI.update_domain_record_resource')
 @patch('syncgandidns.gandi_api.GandiAPI.get_domain_record_resource_value')
 class TestSyncIPAddress(TestCase):
@@ -27,7 +20,7 @@ class TestSyncIPAddress(TestCase):
     def test_sync_ip_address_no_change(self,
                                        get_domain_record_resource_value_mock,
                                        update_domain_record_resource_mock) -> None:
-        get_domain_record_resource_value_mock.side_effect = dummy_get_domain_record_resource_value
+        get_domain_record_resource_value_mock.side_effect = [DUMMY_IPV4, DUMMY_IPV6]
         sync_ip_address(DUMMY_DOMAIN, DUMMY_IPV4, DUMMY_IPV6, DUMMY_API_KEY)
         self.assertEqual(2, get_domain_record_resource_value_mock.call_count)
         self.assertEqual(0, update_domain_record_resource_mock.call_count)
@@ -35,7 +28,7 @@ class TestSyncIPAddress(TestCase):
     def test_sync_ip_address_change_both(self,
                                          get_domain_record_resource_value_mock,
                                          update_domain_record_resource_mock) -> None:
-        get_domain_record_resource_value_mock.return_value = NO_MATCH
+        get_domain_record_resource_value_mock.side_effect = [NO_MATCH, NO_MATCH]
         sync_ip_address(DUMMY_DOMAIN, DUMMY_IPV4, DUMMY_IPV6, DUMMY_API_KEY)
         self.assertEqual(2, get_domain_record_resource_value_mock.call_count)
         self.assertEqual(2, update_domain_record_resource_mock.call_count)
