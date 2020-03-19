@@ -36,16 +36,16 @@ class TestSyncIPAddress(TestCase):
                                        update_ipv4_address_mock) -> None:
         get_ipv6_address_mock.return_value = DUMMY_IPV6
         get_ipv4_address_mock.return_value = DUMMY_IPV4
-        expected1 = "Current: IPV4 = {0}, IPV6 = {1}".format(DUMMY_IPV4, DUMMY_IPV6)
-        expected2 = "IPV4 already current so not updated."
-        expected3 = "IPV6 already current so not updated."
         with LogCapture(level=cl.logging.INFO) as log_out:
             sync_ip_address(DUMMY_DOMAIN, DUMMY_IPV4, DUMMY_IPV6, DUMMY_API_KEY)
         self.assertEqual(1, get_ipv6_address_mock.call_count)
         self.assertEqual(1, get_ipv4_address_mock.call_count)
         self.assertEqual(0, update_ipv6_address_mock.call_count)
         self.assertEqual(0, update_ipv4_address_mock.call_count)
-        _log_check(log_out, expected1, expected2, expected3)
+        _log_check(log_out,
+                   "Current: IPV4 = {0}, IPV6 = {1}".format(DUMMY_IPV4, DUMMY_IPV6),
+                   "IPV4 already current so not updated.",
+                   "IPV6 already current so not updated.")
 
     def test_sync_ip_address_change_both(self,
                                          get_ipv6_address_mock,
@@ -54,16 +54,16 @@ class TestSyncIPAddress(TestCase):
                                          update_ipv4_address_mock) -> None:
         get_ipv6_address_mock.return_value = NO_MATCH
         get_ipv4_address_mock.return_value = NO_MATCH
-        expected1 = "Current: IPV4 = {0}, IPV6 = {1}".format(NO_MATCH, NO_MATCH)
-        expected2 = "IPV4 updated to: {0}".format(DUMMY_IPV4)
-        expected3 = "IPV6 updated to: {0}".format(DUMMY_IPV6)
         with LogCapture(level=cl.logging.INFO) as log_out:
             sync_ip_address(DUMMY_DOMAIN, DUMMY_IPV4, DUMMY_IPV6, DUMMY_API_KEY)
         self.assertEqual(1, get_ipv6_address_mock.call_count)
         self.assertEqual(1, get_ipv4_address_mock.call_count)
         self.assertEqual(1, update_ipv6_address_mock.call_count)
         self.assertEqual(1, update_ipv4_address_mock.call_count)
-        _log_check(log_out, expected1, expected2, expected3)
+        _log_check(log_out,
+                   "Current: IPV4 = {0}, IPV6 = {1}".format(NO_MATCH, NO_MATCH),
+                   "IPV4 updated to: {0}".format(DUMMY_IPV4),
+                   "IPV6 updated to: {0}".format(DUMMY_IPV6))
 
     def test_sync_ip_address_change_ipv4(self,
                                          get_ipv6_address_mock,
@@ -72,16 +72,16 @@ class TestSyncIPAddress(TestCase):
                                          update_ipv4_address_mock) -> None:
         get_ipv6_address_mock.return_value = DUMMY_IPV6
         get_ipv4_address_mock.return_value = NO_MATCH
-        expected1 = "Current: IPV4 = {0}, IPV6 = {1}".format(NO_MATCH, DUMMY_IPV6)
-        expected2 = "IPV4 updated to: {0}".format(DUMMY_IPV4)
-        expected3 = "IPV6 already current so not updated."
         with LogCapture(level=cl.logging.INFO) as log_out:
             sync_ip_address(DUMMY_DOMAIN, DUMMY_IPV4, DUMMY_IPV6, DUMMY_API_KEY)
         self.assertEqual(1, get_ipv6_address_mock.call_count)
         self.assertEqual(1, get_ipv4_address_mock.call_count)
         self.assertEqual(0, update_ipv6_address_mock.call_count)
         self.assertEqual(1, update_ipv4_address_mock.call_count)
-        _log_check(log_out, expected1, expected2, expected3)
+        _log_check(log_out,
+                   "Current: IPV4 = {0}, IPV6 = {1}".format(NO_MATCH, DUMMY_IPV6),
+                   "IPV4 updated to: {0}".format(DUMMY_IPV4),
+                   "IPV6 already current so not updated.")
 
     def test_sync_ip_address_change_ipv6(self,
                                          get_ipv6_address_mock,
@@ -90,16 +90,16 @@ class TestSyncIPAddress(TestCase):
                                          update_ipv4_address_mock) -> None:
         get_ipv6_address_mock.return_value = NO_MATCH
         get_ipv4_address_mock.return_value = DUMMY_IPV4
-        expected1 = "Current: IPV4 = {0}, IPV6 = {1}".format(DUMMY_IPV4, NO_MATCH)
-        expected2 = "IPV4 already current so not updated."
-        expected3 = "IPV6 updated to: {0}".format(DUMMY_IPV6)
         with LogCapture(level=cl.logging.INFO) as log_out:
             sync_ip_address(DUMMY_DOMAIN, DUMMY_IPV4, DUMMY_IPV6, DUMMY_API_KEY)
         self.assertEqual(1, get_ipv6_address_mock.call_count)
         self.assertEqual(1, get_ipv4_address_mock.call_count)
         self.assertEqual(1, update_ipv6_address_mock.call_count)
         self.assertEqual(0, update_ipv4_address_mock.call_count)
-        _log_check(log_out, expected1, expected2, expected3)
+        _log_check(log_out,
+                   "Current: IPV4 = {0}, IPV6 = {1}".format(DUMMY_IPV4, NO_MATCH),
+                   "IPV4 already current so not updated.",
+                   "IPV6 updated to: {0}".format(DUMMY_IPV6))
 
     def test_sync_ip_address_change_none(self,
                                          get_ipv6_address_mock,
@@ -108,13 +108,13 @@ class TestSyncIPAddress(TestCase):
                                          update_ipv4_address_mock) -> None:
         get_ipv6_address_mock.return_value = DUMMY_IPV6
         get_ipv4_address_mock.return_value = DUMMY_IPV4
-        expected1 = "Current: IPV4 = {0}, IPV6 = {1}".format(DUMMY_IPV4, DUMMY_IPV6)
-        expected2 = "New IPV4 not supplied so not updated."
-        expected3 = "New IPV6 not supplied so not updated."
         with LogCapture(level=cl.logging.INFO) as log_out:
             sync_ip_address(DUMMY_DOMAIN, None, None, DUMMY_API_KEY)
         self.assertEqual(1, get_ipv6_address_mock.call_count)
         self.assertEqual(1, get_ipv4_address_mock.call_count)
         self.assertEqual(0, update_ipv6_address_mock.call_count)
         self.assertEqual(0, update_ipv4_address_mock.call_count)
-        _log_check(log_out, expected1, expected2, expected3)
+        _log_check(log_out,
+                   "Current: IPV4 = {0}, IPV6 = {1}".format(DUMMY_IPV4, DUMMY_IPV6),
+                   "New IPV4 not supplied so not updated.",
+                   "New IPV6 not supplied so not updated.")
