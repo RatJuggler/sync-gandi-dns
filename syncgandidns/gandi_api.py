@@ -45,7 +45,7 @@ class GandiAPI:
     def get_ipv6_address(self) -> str:
         return self._get_domain_record_resource_value(AAAA_RECORD)
 
-    def update_domain_record_resource(self, resource: str, value: str) -> None:
+    def _update_domain_record_resource(self, resource: str, value: str) -> None:
         response = requests.get(self.get_rest_url(resource),
                                 headers=self.get_headers(),
                                 data=self.get_update(resource, value),
@@ -53,7 +53,7 @@ class GandiAPI:
         response.raise_for_status()
 
     def update_ipv4_address(self, new_address) -> None:
-        self.update_domain_record_resource(A_RECORD, new_address)
+        self._update_domain_record_resource(A_RECORD, new_address)
 
     def update_ipv6_address(self, new_address) -> None:
-        self.update_domain_record_resource(AAAA_RECORD, new_address)
+        self._update_domain_record_resource(AAAA_RECORD, new_address)
