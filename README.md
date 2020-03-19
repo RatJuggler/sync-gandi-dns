@@ -1,7 +1,7 @@
 # sync-gandi-dns
 
 This is a simple Python package which allows the IP address records for a domain registered with [Gandi](https://www.gandi.net)
-to be kept up to date with the dynamic values assigned by your ISP.
+to be kept up to date with the dynamic public values assigned by your ISP.
 
 To keep it simple it will only update a single domain but can include updates to resource records for both IPV4 (`A`) and IPV6 
 (`AAAA`).
@@ -18,7 +18,7 @@ For development one of the tests requires access to a key and an accessible doma
 set as the environment variables GANDI_API_KEY and GANDI_TEST_DOMAIN. No tests attempt to make any changes.
 
 Of course it also needs to find out what the latest IP address is before deciding if a an update is required. To do this it uses
-the [ipify API](https://www.ipify.org/) which provides simple endpoints for finding your external [IPV4](https://api.ipify.org)
+the [ipify API](https://www.ipify.org/) which provides simple endpoints for finding your public [IPV4](https://api.ipify.org)
 and [IPV6](https://api6.ipify.org) address.
 
 # Installing
