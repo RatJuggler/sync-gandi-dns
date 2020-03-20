@@ -7,23 +7,30 @@ on:
     branches: [ master ]
 
 jobs:
-  build:
-
+  tests:
+    name: "Python ${{ matrix.python-version }}"
     runs-on: ubuntu-latest
+
+    strategy:
+      matrix:
+        python-version: [3.6, 3.7]
 
     steps:
     - uses: actions/checkout@v2
-    - name: Set up Python 3.7
+    - name: "Set up Python ${{ matrix.python-version }}"
       uses: actions/setup-python@v1
       with:
-        python-version: 3.7
-    - name: Install dependencies
+        python-version: "${{ matrix.python-version }}"
+    - name: "Install dependencies"
       run: |
         python -m pip install --upgrade pip
         pip install setuptools tox  tox-gh-actions
-    - name: Install the application
+    - name: "Install the application"
       run: |
         pip install .
-    - name: Run Tox
+    - name: "Run Tox"
       run: |
         tox
+      env:
+        GANDI_API_KEY: ${{ secrets.GANDI_API_KEY }}
+        GANDI_TEST_DOMAIN: "jurassic-john.site"

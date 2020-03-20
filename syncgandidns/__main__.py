@@ -24,7 +24,7 @@ def get_ip_address(ip_type: str, get_ip: callable, ip_validate: callable) -> Opt
 
 @click.command(help='''
     Sync a dynamic IP address (V4 & V6) with a Gandi DNS domain entry.\n
-    The external IP address is determined automatically by default.\n 
+    The external IP address is determined automatically by default.\n
     DOMAIN: The domain to update the DNS for.\n
     APIKEY: Your Gandi API key.
     ''')
