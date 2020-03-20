@@ -36,7 +36,7 @@ setup(
         # Trove classifiers
         # Full list: https://pypi.python.org/pypi?%3Aaction=list_classifiers
         'License :: OSI Approved :: MIT License',
-        'Development Status :: 3 - Alpha',
+        'Development Status :: 4 - Beta',
         'Programming Language :: Python :: 3.5',
         'Operating System :: POSIX :: Linux',
         'Topic :: Internet :: Name Service (DNS)'

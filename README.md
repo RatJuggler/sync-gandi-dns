@@ -49,12 +49,18 @@ Usage: syncgandidns [OPTIONS] DOMAIN
 
 Options:
   --version                       Show the version and exit.
-  -ipv4 IPV4_ADDRESS              Override the IPV4 address to update the
+  -no-ipv6, --no-ipv6-update      Don't update the IPV6 address, will override
+                                  '-ipv6'.
+  -ipv4, --ipv4-address IPV4_ADDRESS
+                                  Override the IPV4 address to update the
                                   domain DNS with.
-  -ipv6 IPV6_ADDRESS              Override the IPV6 address to update the
+  -ipv6, --ipv6-address IPV6_ADDRESS
+                                  Override the IPV6 address to update the
                                   domain DNS with.
   -l, --log-level [DEBUG|VERBOSE|INFO|WARNING]
                                   Show additional logging information.
                                   [default: INFO]
   --help                          Show this message and exit.
 ```
+
+I've currently got it running as an hourly `cron` job.
