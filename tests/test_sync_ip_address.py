@@ -1,3 +1,5 @@
+from typing import Optional
+
 from testfixtures import LogCapture
 from unittest import TestCase
 from unittest.mock import patch
@@ -29,6 +31,12 @@ class TestSyncIPAddress(TestCase):
     def setUp(self) -> None:
         pass
 
+    @staticmethod
+    def do_sync(ipv4: Optional[str], ipv6: Optional[str]) -> LogCapture:
+        with LogCapture(level=cl.logging.INFO) as log_out:
+            sync_ip_address(DUMMY_DOMAIN, ipv4, ipv6, DUMMY_API_KEY)
+        return log_out
+
     def test_sync_ip_address_no_change(self,
                                        get_ipv6_address_mock,
                                        get_ipv4_address_mock,
@@ -36,8 +44,7 @@ class TestSyncIPAddress(TestCase):
                                        update_ipv4_address_mock) -> None:
         get_ipv6_address_mock.return_value = DUMMY_IPV6
         get_ipv4_address_mock.return_value = DUMMY_IPV4
-        with LogCapture(level=cl.logging.INFO) as log_out:
-            sync_ip_address(DUMMY_DOMAIN, DUMMY_IPV4, DUMMY_IPV6, DUMMY_API_KEY)
+        log_out = self.do_sync(DUMMY_IPV4, DUMMY_IPV6)
         self.assertEqual(1, get_ipv6_address_mock.call_count)
         self.assertEqual(1, get_ipv4_address_mock.call_count)
         self.assertEqual(0, update_ipv6_address_mock.call_count)
@@ -54,8 +61,7 @@ class TestSyncIPAddress(TestCase):
                                          update_ipv4_address_mock) -> None:
         get_ipv6_address_mock.return_value = NO_MATCH
         get_ipv4_address_mock.return_value = NO_MATCH
-        with LogCapture(level=cl.logging.INFO) as log_out:
-            sync_ip_address(DUMMY_DOMAIN, DUMMY_IPV4, DUMMY_IPV6, DUMMY_API_KEY)
+        log_out = self.do_sync(DUMMY_IPV4, DUMMY_IPV6)
         self.assertEqual(1, get_ipv6_address_mock.call_count)
         self.assertEqual(1, get_ipv4_address_mock.call_count)
         self.assertEqual(1, update_ipv6_address_mock.call_count)
@@ -72,8 +78,7 @@ class TestSyncIPAddress(TestCase):
                                          update_ipv4_address_mock) -> None:
         get_ipv6_address_mock.return_value = DUMMY_IPV6
         get_ipv4_address_mock.return_value = NO_MATCH
-        with LogCapture(level=cl.logging.INFO) as log_out:
-            sync_ip_address(DUMMY_DOMAIN, DUMMY_IPV4, DUMMY_IPV6, DUMMY_API_KEY)
+        log_out = self.do_sync(DUMMY_IPV4, DUMMY_IPV6)
         self.assertEqual(1, get_ipv6_address_mock.call_count)
         self.assertEqual(1, get_ipv4_address_mock.call_count)
         self.assertEqual(0, update_ipv6_address_mock.call_count)
@@ -90,8 +95,7 @@ class TestSyncIPAddress(TestCase):
                                          update_ipv4_address_mock) -> None:
         get_ipv6_address_mock.return_value = NO_MATCH
         get_ipv4_address_mock.return_value = DUMMY_IPV4
-        with LogCapture(level=cl.logging.INFO) as log_out:
-            sync_ip_address(DUMMY_DOMAIN, DUMMY_IPV4, DUMMY_IPV6, DUMMY_API_KEY)
+        log_out = self.do_sync(DUMMY_IPV4, DUMMY_IPV6)
         self.assertEqual(1, get_ipv6_address_mock.call_count)
         self.assertEqual(1, get_ipv4_address_mock.call_count)
         self.assertEqual(1, update_ipv6_address_mock.call_count)
@@ -108,8 +112,7 @@ class TestSyncIPAddress(TestCase):
                                          update_ipv4_address_mock) -> None:
         get_ipv6_address_mock.return_value = DUMMY_IPV6
         get_ipv4_address_mock.return_value = DUMMY_IPV4
-        with LogCapture(level=cl.logging.INFO) as log_out:
-            sync_ip_address(DUMMY_DOMAIN, None, None, DUMMY_API_KEY)
+        log_out = self.do_sync(None, None)
         self.assertEqual(1, get_ipv6_address_mock.call_count)
         self.assertEqual(1, get_ipv4_address_mock.call_count)
         self.assertEqual(0, update_ipv6_address_mock.call_count)
