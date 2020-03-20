@@ -4,22 +4,19 @@ from typing import Optional
 from .gandi_api import GandiAPI
 
 
+def sync_ip(ip_type: str, new_ip: Optional[str], get_ip: callable, update_ip: callable) -> None:
+    current_ip = get_ip()
+    logging.info("Current {0}: {1}".format(ip_type, current_ip))
+    if new_ip is None:
+        logging.info("New {0} not supplied so not updated.".format(ip_type))
+    elif new_ip == current_ip:
+        logging.info("{0} already current so not updated.".format(ip_type))
+    else:
+        update_ip(new_ip)
+        logging.info("{0} updated to: {1}".format(ip_type, new_ip))
+
+
 def sync_ip_address(domain: str, ipv4: Optional[str], ipv6: Optional[str], apikey: str) -> None:
     gandi_api = GandiAPI(apikey, domain)
-    current_ipv4 = gandi_api.get_ipv4_address()
-    current_ipv6 = gandi_api.get_ipv6_address()
-    logging.info("Current: IPV4 = {0}, IPV6 = {1}".format(current_ipv4, current_ipv6))
-    if ipv4 is None:
-        logging.info("New IPV4 not supplied so not updated.")
-    elif ipv4 == current_ipv4:
-        logging.info("IPV4 already current so not updated.")
-    else:
-        gandi_api.update_ipv4_address(ipv4)
-        logging.info("IPV4 updated to: {0}".format(ipv4))
-    if ipv6 is None:
-        logging.info("New IPV6 not supplied so not updated.")
-    elif ipv6 == current_ipv6:
-        logging.info("IPV6 already current so not updated.")
-    else:
-        gandi_api.update_ipv6_address(ipv6)
-        logging.info("IPV6 updated to: {0}".format(ipv6))
+    sync_ip('IPV4', ipv4, gandi_api.get_ipv4_address, gandi_api.update_ipv4_address)
+    sync_ip('IPV6', ipv6, gandi_api.get_ipv6_address, gandi_api.update_ipv6_address)
