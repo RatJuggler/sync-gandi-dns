@@ -25,9 +25,10 @@ class TestBaseCommand(TestCase):
         result = self.runner.invoke(main.syncgandidns, ['--help'])
         self.assertEqual(result.exit_code, 0)
         self.assertIn(" --version ", result.output)
-        self.assertIn(" -ipv4 ", result.output)
-        self.assertIn(" -ipv6 ", result.output)
-        self.assertIn(" --log-level ", result.output)
+        self.assertIn(" -no-ipv6, --no-ipv6-update ", result.output)
+        self.assertIn(" -ipv4, --ipv4-address ", result.output)
+        self.assertIn(" -ipv6, --ipv6-address ", result.output)
+        self.assertIn(" -l, --log-level ", result.output)
         self.assertIn(" --help ", result.output)
 
     def test_version(self) -> None:
@@ -48,12 +49,12 @@ class TestBaseCommand(TestCase):
     def test_invalid_ipv4_address(self) -> None:
         result = self.runner.invoke(main.syncgandidns, ['-ipv4', 'localhost'])
         self.assertEqual(result.exit_code, 2)
-        self.assertIn('Error: Invalid value for \'-ipv4\': localhost is not a valid IPV4 address', result.output)
+        self.assertIn('Error: Invalid value for \'-ipv4\' / \'--ipv4-address\': localhost is not a valid IPV4 address', result.output)
 
     def test_invalid_ipv6_address(self) -> None:
         result = self.runner.invoke(main.syncgandidns, ['-ipv6', 'localhost'])
         self.assertEqual(result.exit_code, 2)
-        self.assertIn('Error: Invalid value for \'-ipv6\': localhost is not a valid IPV6 address', result.output)
+        self.assertIn('Error: Invalid value for \'-ipv6\' / \'--ipv6-address\': localhost is not a valid IPV6 address', result.output)
 
     def _found_check(self, msg: str) -> str:
         found = '...found:'

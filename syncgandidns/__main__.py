@@ -1,3 +1,5 @@
+from typing import Optional
+
 import click
 import logging
 
@@ -11,6 +13,15 @@ IPV4_ADDRESS = IPv4AddressParamType()
 IPV6_ADDRESS = IPv6AddressParamType()
 
 
+def get_ip_address(ip_type: str, get_ip: callable, ip_validate: callable) -> Optional[str]:
+    ip_address = get_ip()
+    logging.info("...found: {0}".format(ip_address))
+    if ip_validate(ip_address) is None:
+        logging.info("...not valid {0} won't update.".format(ip_type))
+        ip_address = None
+    return ip_address
+
+
 @click.command(help='''
     Sync a dynamic IP address (V4 & V6) with a Gandi DNS domain entry.\n
     The external IP address is determined automatically by default.\n 
@@ -21,7 +32,7 @@ IPV6_ADDRESS = IPv6AddressParamType()
 @click.argument('domain', nargs=1, type=click.STRING, required=True)
 @click.argument('apikey', nargs=1, type=click.STRING, required=True)
 @click.option('-no-ipv6', '--no-ipv6-update', 'no_ipv6', is_flag=True,
-              help='Don\'t update the IPV6 address, will override \'-ipv4\'')
+              help='Don\'t update the IPV6 address, will override \'-ipv6\'.')
 @click.option('-ipv4', '--ipv4-address', 'ipv4', type=IPV4_ADDRESS,
               help='Override the IPV4 address to update the domain DNS with.')
 @click.option('-ipv6', '--ipv6-address', 'ipv6', type=IPV6_ADDRESS,
@@ -44,18 +55,10 @@ def syncgandidns(domain: str, apikey: str, no_ipv6: bool, ipv4: str, ipv6: str, 
     logging.debug("Using API key: {0}".format(apikey))
     logging.info("Update IPV4 to: {0}".format('<automatic lookup>' if ipv4 is None else ipv4))
     if ipv4 is None:
-        ipv4 = get_ipv4_address()
-        logging.info("...found: {0}".format(ipv4))
-        if IPV4_ADDRESS.validate(ipv4) is None:
-            logging.info("...not valid IPV4 won't update.")
-            ipv4 = None
+        ipv4 = get_ip_address('IPV4', get_ipv4_address, IPV4_ADDRESS.validate)
     logging.info("Update IPV6 to: {0}".format('<automatic lookup>' if ipv6 is None else ipv6))
     if ipv6 is None:
-        ipv6 = get_ipv6_address()
-        logging.info("...found: {0}".format(ipv6))
-        if IPV6_ADDRESS.validate(ipv6) is None:
-            logging.info("...not valid IPV6 won't update.")
-            ipv6 = None
+        ipv6 = get_ip_address('IPV6', get_ipv6_address, IPV6_ADDRESS.validate)
     sync_ip_address(domain, ipv4, ipv6, apikey)
 
 
