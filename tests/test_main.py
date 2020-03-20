@@ -1,4 +1,3 @@
-from ipaddress import IPv4Address, AddressValueError, IPv6Address
 from unittest import TestCase
 from unittest.mock import patch, MagicMock
 from testfixtures import LogCapture
@@ -49,34 +48,37 @@ class TestBaseCommand(TestCase):
     def test_invalid_ipv4_address(self) -> None:
         result = self.runner.invoke(main.syncgandidns, ['-ipv4', 'localhost'])
         self.assertEqual(result.exit_code, 2)
-        self.assertIn('Error: Invalid value for \'-ipv4\' / \'--ipv4-address\': localhost is not a valid IPV4 address', result.output)
+        self.assertIn('Error: Invalid value for \'-ipv4\' / \'--ipv4-address\': localhost is not a valid IPV4 address',
+                      result.output)
 
     def test_invalid_ipv6_address(self) -> None:
         result = self.runner.invoke(main.syncgandidns, ['-ipv6', 'localhost'])
         self.assertEqual(result.exit_code, 2)
-        self.assertIn('Error: Invalid value for \'-ipv6\' / \'--ipv6-address\': localhost is not a valid IPV6 address', result.output)
+        self.assertIn('Error: Invalid value for \'-ipv6\' / \'--ipv6-address\': localhost is not a valid IPV6 address',
+                      result.output)
 
     def _found_check(self, msg: str) -> str:
         found = '...found:'
         self.assertTrue((msg.startswith(found)))
         return msg[len(found) + 1:]
 
-    def _found_ipv4_check(self, msg: str) -> None:
-        ipv4 = self._found_check(msg)
-        try:
-            IPv4Address(ipv4)
-        except AddressValueError:
-            self.fail("{0} is not a valid IPV4 address".format(ipv4))
+    def _found_ipv4_check(self, msg: str, ipv4: str) -> None:
+        ipv4_found = self._found_check(msg)
+        self.assertEqual(ipv4_found, ipv4)
 
-    def _found_ipv6_check(self, msg: str) -> None:
-        ipv6 = self._found_check(msg)
-        try:
-            IPv6Address(ipv6)
-        except AddressValueError:
-            self.fail("{0} is not a valid IPV6 address".format(ipv6))
+    def _found_ipv6_check(self, msg: str, ipv6: str) -> None:
+        ipv6_found = self._found_check(msg)
+        self.assertEqual(ipv6_found, ipv6)
 
+    @patch('syncgandidns.__main__.get_ipv4_address')
+    @patch('syncgandidns.__main__.get_ipv6_address')
     @patch('syncgandidns.__main__.sync_ip_address')
-    def test_automatic(self, sync_ip_address_mock: MagicMock) -> None:
+    def test_automatic(self,
+                       sync_ip_address_mock: MagicMock,
+                       get_ipv6_address_mock: MagicMock,
+                       get_ipv4_address_mock: MagicMock) -> None:
+        get_ipv4_address_mock.return_value = "127.0.0.1"
+        get_ipv6_address_mock.return_value = "0001:0002:0003:0004:0005:0006:0007:0008"
         with LogCapture(level=cl.logging.INFO) as log_out:
             result = self.runner.invoke(main.syncgandidns, ['pickle.jar',
                                                             'secretpassword'])
@@ -85,8 +87,8 @@ class TestBaseCommand(TestCase):
                         "Updating DNS for domain: pickle.jar",
                         "Update IPV4 to: <automatic lookup>",
                         "Update IPV6 to: <automatic lookup>")
-        self._found_ipv4_check(log_out.records[2].msg)
-        self._found_ipv6_check(log_out.records[4].msg)
+        self._found_ipv4_check(log_out.records[2].msg, get_ipv4_address_mock.return_value)
+        self._found_ipv6_check(log_out.records[4].msg, get_ipv6_address_mock.return_value)
         sync_ip_address_mock.assert_called_once()
 
     @patch('syncgandidns.__main__.sync_ip_address')
@@ -103,8 +105,12 @@ class TestBaseCommand(TestCase):
                         "Update IPV6 to: 2001:db8:85a3::8a2e:370:7334")
         sync_ip_address_mock.assert_called_once()
 
+    @patch('syncgandidns.__main__.get_ipv4_address')
     @patch('syncgandidns.__main__.sync_ip_address')
-    def test_debug_log(self, sync_ip_address_mock: MagicMock) -> None:
+    def test_debug_log(self,
+                       sync_ip_address_mock: MagicMock,
+                       get_ipv4_address_mock: MagicMock) -> None:
+        get_ipv4_address_mock.return_value = "127.0.0.1"
         with LogCapture(level=cl.logging.DEBUG) as log_out:
             result = self.runner.invoke(main.syncgandidns, ['jam.jar',
                                                             'secretpassword',
@@ -115,5 +121,5 @@ class TestBaseCommand(TestCase):
                         "Update IPV4 to: <automatic lookup>",
                         "Update IPV6 to: 2701:db8:86a3::8a3e:371:7734")
         log_out.check_present(('root', cl.logging.getLevelName(cl.logging.DEBUG), "Using API key: secretpassword"))
-        self._found_ipv4_check(log_out.records[6].msg)
+        self._found_ipv4_check(log_out.records[3].msg, get_ipv4_address_mock.return_value)
         sync_ip_address_mock.assert_called_once()

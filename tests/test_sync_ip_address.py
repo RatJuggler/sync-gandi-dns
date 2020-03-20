@@ -2,7 +2,7 @@ from typing import Optional
 
 from testfixtures import LogCapture
 from unittest import TestCase
-from unittest.mock import patch
+from unittest.mock import patch, MagicMock
 
 from syncgandidns.sync_ip_address import sync_ip_address
 import syncgandidns.configure_logging as cl
@@ -39,10 +39,10 @@ class TestSyncIPAddress(TestCase):
         return log_out
 
     def test_sync_ip_address_no_change(self,
-                                       get_ipv6_address_mock,
-                                       get_ipv4_address_mock,
-                                       update_ipv6_address_mock,
-                                       update_ipv4_address_mock) -> None:
+                                       get_ipv6_address_mock: MagicMock,
+                                       get_ipv4_address_mock: MagicMock,
+                                       update_ipv6_address_mock: MagicMock,
+                                       update_ipv4_address_mock: MagicMock) -> None:
         get_ipv6_address_mock.return_value = DUMMY_IPV6
         get_ipv4_address_mock.return_value = DUMMY_IPV4
         log_out = self.do_sync(DUMMY_IPV4, DUMMY_IPV6)
@@ -57,10 +57,10 @@ class TestSyncIPAddress(TestCase):
                    "IPV6 already current so not updated.")
 
     def test_sync_ip_address_change_both(self,
-                                         get_ipv6_address_mock,
-                                         get_ipv4_address_mock,
-                                         update_ipv6_address_mock,
-                                         update_ipv4_address_mock) -> None:
+                                         get_ipv6_address_mock: MagicMock,
+                                         get_ipv4_address_mock: MagicMock,
+                                         update_ipv6_address_mock: MagicMock,
+                                         update_ipv4_address_mock: MagicMock) -> None:
         get_ipv6_address_mock.return_value = NO_MATCH
         get_ipv4_address_mock.return_value = NO_MATCH
         log_out = self.do_sync(DUMMY_IPV4, DUMMY_IPV6)
@@ -75,10 +75,10 @@ class TestSyncIPAddress(TestCase):
                    "IPV6 updated to: {0}".format(DUMMY_IPV6))
 
     def test_sync_ip_address_change_ipv4(self,
-                                         get_ipv6_address_mock,
-                                         get_ipv4_address_mock,
-                                         update_ipv6_address_mock,
-                                         update_ipv4_address_mock) -> None:
+                                         get_ipv6_address_mock: MagicMock,
+                                         get_ipv4_address_mock: MagicMock,
+                                         update_ipv6_address_mock: MagicMock,
+                                         update_ipv4_address_mock: MagicMock) -> None:
         get_ipv6_address_mock.return_value = DUMMY_IPV6
         get_ipv4_address_mock.return_value = NO_MATCH
         log_out = self.do_sync(DUMMY_IPV4, DUMMY_IPV6)
@@ -93,10 +93,10 @@ class TestSyncIPAddress(TestCase):
                    "IPV6 already current so not updated.")
 
     def test_sync_ip_address_change_ipv6(self,
-                                         get_ipv6_address_mock,
-                                         get_ipv4_address_mock,
-                                         update_ipv6_address_mock,
-                                         update_ipv4_address_mock) -> None:
+                                         get_ipv6_address_mock: MagicMock,
+                                         get_ipv4_address_mock: MagicMock,
+                                         update_ipv6_address_mock: MagicMock,
+                                         update_ipv4_address_mock: MagicMock) -> None:
         get_ipv6_address_mock.return_value = NO_MATCH
         get_ipv4_address_mock.return_value = DUMMY_IPV4
         log_out = self.do_sync(DUMMY_IPV4, DUMMY_IPV6)
@@ -111,10 +111,10 @@ class TestSyncIPAddress(TestCase):
                    "IPV6 updated to: {0}".format(DUMMY_IPV6))
 
     def test_sync_ip_address_change_none(self,
-                                         get_ipv6_address_mock,
-                                         get_ipv4_address_mock,
-                                         update_ipv6_address_mock,
-                                         update_ipv4_address_mock) -> None:
+                                         get_ipv6_address_mock: MagicMock,
+                                         get_ipv4_address_mock: MagicMock,
+                                         update_ipv6_address_mock: MagicMock,
+                                         update_ipv4_address_mock: MagicMock) -> None:
         get_ipv6_address_mock.return_value = DUMMY_IPV6
         get_ipv4_address_mock.return_value = DUMMY_IPV4
         log_out = self.do_sync(None, None)
