@@ -1,6 +1,7 @@
 # sync-gandi-dns
 
 ![Test & QA](https://github.com/RatJuggler/sync-gandi-dns/workflows/Test%20&%20QA/badge.svg)
+![GitHub release (latest by date)](https://img.shields.io/github/v/release/RatJuggler/sync-gandi-dns)
 
 This is a simple Python package which allows the IP address records for a domain registered with [Gandi](https://www.gandi.net)
 to be kept up to date with the dynamic public values assigned by your ISP.
