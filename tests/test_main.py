@@ -15,7 +15,7 @@ def _init_log_check(log_out: LogCapture, expected1: str, expected2: str, expecte
                           (root, log_level, expected3))
 
 
-class TestBaseCommand(TestCase):
+class TestMain(TestCase):
 
     def setUp(self) -> None:
         self.runner = CliRunner()
@@ -30,6 +30,7 @@ class TestBaseCommand(TestCase):
         self.assertIn(" -l, --log-level ", result.output)
         self.assertIn(" --help ", result.output)
 
+    # TODO: Requires "python3 setup.py sdist" to have been run to pass, review.
     def test_version(self) -> None:
         result = self.runner.invoke(main.syncgandidns, ['--version'])
         self.assertEqual(result.exit_code, 0)
