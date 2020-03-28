@@ -14,6 +14,11 @@ class TestGandiAPI(TestCase):
         test_domain = os.getenv("GANDI_TEST_DOMAIN")
         self.GANDI_API = GandiAPI(api_key, test_domain)
 
+    def test_get_update(self) -> None:
+        expected = '{"rrset_type": "RESOURCE", "rrset_values": ["VALUE"]}'
+        update = self.GANDI_API.get_update("RESOURCE", "VALUE")
+        self.assertEqual(expected, update)
+
     def test_get_domain_record_resource_value_unknown(self) -> None:
         with self.assertRaises(HTTPError):
             self.GANDI_API._get_domain_record_resource_value('UNKNOWN')
