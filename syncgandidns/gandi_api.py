@@ -5,7 +5,7 @@ import requests
 
 
 URL = "https://api.gandi.net/v5/livedns/domains/"
-RECORDS = "/records/@/"  # @ is the DNS record name.
+RECORDS = "/records/@/"  # @ is the DNS record name (rrset_name).
 A_RECORD = 'A'
 AAAA_RECORD = 'AAAA'
 
@@ -20,11 +20,11 @@ class GandiAPI:
         return URL + self.domain + RECORDS + resource
 
     def get_headers(self) -> Dict[str, str]:
-        return {"Authorization": "Apikey " + self.api_key}
+        return {"Authorization": "Apikey " + self.api_key, "Content-Type": "application/json"}
 
     @staticmethod
     def get_update(resource: str, value: str) -> str:
-        return '{{"rrset_type": {0}, "rrset_values": ["{1}"]}}'.format(resource, value)
+        return '{{"rrset_type": "{0}", "rrset_values": ["{1}"]}}'.format(resource, value)
 
     def _get_domain_record_resource_value(self, resource: str) -> str:
         response = requests.get(self.get_rest_url(resource),
@@ -46,7 +46,7 @@ class GandiAPI:
         return self._get_domain_record_resource_value(AAAA_RECORD)
 
     def _update_domain_record_resource(self, resource: str, value: str) -> None:
-        response = requests.get(self.get_rest_url(resource),
+        response = requests.put(self.get_rest_url(resource),
                                 headers=self.get_headers(),
                                 data=self.get_update(resource, value),
                                 timeout=3)
