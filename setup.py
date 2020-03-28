@@ -9,10 +9,16 @@ setup(
     description='Sync a dynamic IP address with a Gandi DNS domain entry.',
     long_description=long_description,
     long_description_content_type='text/markdown',
+    keywords='gandi dns',
     author='John Chase',
     author_email='ratteal@gmail.com',
     python_requires='>=3.6',
     url='https://github.com/RatJuggler/sync-gandi-dns',
+    project_urls={
+        "Documentation": "https://github.com/RatJuggler/sync-gandi-dns",
+        "Code": "https://github.com/RatJuggler/sync-gandi-dns",
+        "Issue tracker": "https://github.com/RatJuggler/sync-gandi-dns/issues",
+    },
     packages=find_packages(exclude=['tests']),
     entry_points={
         'console_scripts': [
