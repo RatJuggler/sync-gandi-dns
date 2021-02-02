@@ -35,28 +35,28 @@ class TestMain(TestCase):
     # TODO: Requires "python3 setup.py sdist" to have been run to pass, review.
     def test_version(self) -> None:
         result = self.runner.invoke(main.syncgandidns, ['--version'])
-        self.assertEqual(result.exit_code, 0)
+        self.assertEqual(0, result.exit_code)
         self.assertIn("syncgandidns, version ", result.output)
 
     def test_missing_domain(self) -> None:
         result = self.runner.invoke(main.syncgandidns, ['-a', 'secretpassword'])
-        self.assertEqual(result.exit_code, 2)
+        self.assertEqual(2, result.exit_code)
         self.assertIn('Error: Missing option \'-d\' / \'--domain\'.', result.output)
 
     def test_missing_apikey(self) -> None:
         result = self.runner.invoke(main.syncgandidns, ['-d', 'dinosaur.tea'])
-        self.assertEqual(result.exit_code, 2)
+        self.assertEqual(2, result.exit_code)
         self.assertIn('Error: Missing option \'-a\' / \'--apikey\'.', result.output)
 
     def test_invalid_ipv4_address(self) -> None:
         result = self.runner.invoke(main.syncgandidns, ['-ipv4', 'localhost'])
-        self.assertEqual(result.exit_code, 2)
+        self.assertEqual(2, result.exit_code)
         self.assertIn('Error: Invalid value for \'-ipv4\' / \'--ipv4-address\': localhost is not a valid IPV4 address',
                       result.output)
 
     def test_invalid_ipv6_address(self) -> None:
         result = self.runner.invoke(main.syncgandidns, ['-ipv6', 'localhost'])
-        self.assertEqual(result.exit_code, 2)
+        self.assertEqual(2, result.exit_code)
         self.assertIn('Error: Invalid value for \'-ipv6\' / \'--ipv6-address\': localhost is not a valid IPV6 address',
                       result.output)
 
@@ -85,7 +85,7 @@ class TestMain(TestCase):
         with LogCapture(level=cl.logging.INFO) as log_out:
             result = self.runner.invoke(main.syncgandidns, ['-d', 'pickle.jar',
                                                             '-a', 'secretpassword'])
-        self.assertEqual(result.exit_code, 0)
+        self.assertEqual(0, result.exit_code)
         _init_log_check(log_out,
                         "Updating DNS for domain: pickle.jar",
                         "Update IPV4 to: <automatic lookup>",
@@ -101,7 +101,7 @@ class TestMain(TestCase):
                                                             '-a', 'secretpassword',
                                                             '-ipv4', '192.168.0.1',
                                                             '-ipv6', '2001:0db8:85a3:0000:0000:8a2e:0370:7334'])
-        self.assertEqual(result.exit_code, 0)
+        self.assertEqual(0, result.exit_code)
         _init_log_check(log_out,
                         "Updating DNS for domain: pickle.jar",
                         "Update IPV4 to: 192.168.0.1",
@@ -118,7 +118,7 @@ class TestMain(TestCase):
             result = self.runner.invoke(main.syncgandidns, ['-d', 'jam.jar',
                                                             '-a', 'secretpassword',
                                                             '-ipv6', '2701:db8:86a3::8a3e:371:7734'])
-        self.assertEqual(result.exit_code, 0)
+        self.assertEqual(0, result.exit_code)
         _init_log_check(log_out,
                         "Updating DNS for domain: jam.jar",
                         "Update IPV4 to: <automatic lookup>",
