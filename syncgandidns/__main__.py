@@ -1,10 +1,19 @@
 import click
 import logging
 
-from .configure_logging import configure_logging
-from .sync_ip_address import do_sync
 from .ipv4address_param import IPV4_ADDRESS
 from .ipv6address_param import IPV6_ADDRESS
+from .configure_logging import configure_logging
+from .gandi_api import GandiAPI
+from .sync_ip_address import do_sync
+
+
+def test_access(domain: str, apikey: str) -> None:
+    logging.info("Testing access to DNS records for domain: {0}".format(domain))
+    gandi_api = GandiAPI(apikey, domain)
+    dns_records = gandi_api.get_domain_records()
+    logging.info("DNS Records retrieved:")
+    logging.info(dns_records)
 
 
 @click.command(help='''
@@ -24,7 +33,9 @@ from .ipv6address_param import IPV6_ADDRESS
               help='Override the IPV6 address to update the domain DNS with.')
 @click.option('-l', '--log-level', 'level', type=click.Choice(['DEBUG', 'VERBOSE', 'INFO', 'WARNING']),
               help='Show additional logging information.', default='INFO', show_default=True)
-def syncgandidns(domain: str, apikey: str, no_ipv6: bool, ipv4: str, ipv6: str, level: str) -> None:
+@click.option('-t', '--test', 'test', default=False, is_flag=True,
+              help="Test the Gandi API key and exit.", show_default=True)
+def syncgandidns(domain: str, apikey: str, no_ipv6: bool, ipv4: str, ipv6: str, level: str, test: bool) -> None:
     """
     Sync local dynamic IP address with Gandi DNS.
     :param domain: To sync IP address for
@@ -33,11 +44,15 @@ def syncgandidns(domain: str, apikey: str, no_ipv6: bool, ipv4: str, ipv6: str, 
     :param ipv4: To sync to the domain DNS
     :param ipv6: To sync to the domain DNS
     :param level: Set a logging level; DEBUG, VERBOSE, INFO or WARNING
+    :param test: Test access to a domains records
     :return: No meaningful return
     """
     configure_logging(level)
     logging.debug("Using API key: {0}".format(apikey))
-    do_sync(domain, apikey, no_ipv6, ipv4, ipv6)
+    if test:
+        test_access(domain, apikey)
+    else:
+        do_sync(domain, apikey, no_ipv6, ipv4, ipv6)
 
 
 if __name__ == '__main__':
