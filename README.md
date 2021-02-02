@@ -33,7 +33,7 @@ Then install/update as a Python package:
 
 ## Running
 
-The domain to update and the API key can be supplied as options or environment variables.
+The domain to update, and the API key can be supplied as options or environment variables.
 ```
 $ syncgandidns --help
 Usage: syncgandidns [OPTIONS] DOMAIN
@@ -67,11 +67,27 @@ Options:
                                   False]
   --help                          Show this message and exit.
 ```
+## Docker
 
-I've currently got it running as an hourly `cron` job.
+Alternatively docker build and compose files are available which create a standalone image to run the sync on an hourly schedule.
+
+Edit the *docker/crontab.txt* file for your domain and preferred timings. If you have multiple domains just repeat the entries for
+each domain.
+
+Create the image with: `docker build -f docker/Dockerfile -t sync-gandi-dns:local .`
+
+We need to be careful that the Gandi API key is not included in the image in case it is pushed to a public repository (and it's 
+also just best practice). There are a number of ways to inject the key into the image but probably the easiest is to create an 
+`env.list` file from the supplied template, set the key in it and then run the image with the `--env-file` option. You could also
+set the domain here if you have a single domain.
+
+    docker run sync-gandi-dns:local -d --env-file ./docker/env.list
+
+Or just use the compose file to do everything:
+
+    docker-compose up -d
 
 ## Development
 
 For development one of the tests requires access to a key, and an accessible domain to show a working API call. These need to be
 set as the environment variables GANDI_TEST_APIKEY and GANDI_TEST_DOMAINS. No tests attempt to make any changes.
-
