@@ -1,0 +1,12 @@
+version: '3.8'
+
+services:
+  sync-gandi-dns:
+    image: ${dockerId:-johnchase}/sync-gandi-dns:${BUILD_TAG:-local}
+    build:
+      context: .
+      dockerfile: ./docker/Dockerfile
+      target: sync-gandi-dns
+    env_file:
+      - ./docker/env.list
+    restart: unless-stopped
