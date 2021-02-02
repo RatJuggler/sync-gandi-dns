@@ -22,9 +22,9 @@ def test_access(domain: str, apikey: str) -> None:
     ''')
 @click.version_option()
 @click.option('-d', '--domain', 'domain', type=click.STRING, required=True, envvar='GANDI_DOMAIN',
-              help='The domain to update the DNS for.')
+              help='The domain to update the DNS for. Taken from environment variable GANDI_DOMAIN if not supplied.')
 @click.option('-a', '--apikey', 'apikey', type=click.STRING, required=True, envvar='GANDI_APIKEY',
-              help='Your Gandi API key. Taken from environment variable GANDI_APIKEY if present.')
+              help='Your Gandi API key. Taken from environment variable GANDI_APIKEY if not supplied.')
 @click.option('-ipv4', '--ipv4-address', 'ipv4', type=IPV4_ADDRESS,
               help='Override the IPV4 address to update the domain DNS with.')
 @click.option('-no-ipv4', '--no-ipv4-update', 'no_ipv4', is_flag=True,
