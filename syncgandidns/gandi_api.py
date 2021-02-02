@@ -9,24 +9,25 @@ class GandiAPI:
     def __init__(self, api_key: str, domain: str) -> None:
         self.__api_key = api_key
         self.__domain = domain
-        root_url = 'https://api.gandi.net/'
-        self.__livedns = root_url + 'livedns/'
-        self.__organization = root_url + 'organization/'
+        self.__livedns = 'https://api.gandi.net/livedns/'
 
-    def get_domain_record_url(self, resource: str) -> str:
+    def _get_domain_records_url(self) -> str:
+        return self.__livedns + 'domains/' + self.__domain + '/records'
+
+    def _get_domain_record_url(self, resource: str) -> str:
         # @ is the DNS record name (rrset_name).
-        return self.__livedns + 'domains/' + self.__domain + '/records/@/' + resource
+        return self._get_domain_records_url() + '/@/' + resource
 
-    def get_headers(self) -> Dict[str, str]:
+    def _get_headers(self) -> Dict[str, str]:
         return {'Authorization': '"Apikey ' + self.__api_key, 'Content-Type': 'application/json'}
 
     @staticmethod
-    def get_update(resource: str, value: str) -> str:
+    def _get_update(resource: str, value: str) -> str:
         return '{{"rrset_type": "{0}", "rrset_values": ["{1}"]}}'.format(resource, value)
 
     def _get_domain_record_resource_value(self, resource: str) -> str:
-        response = requests.get(self.get_domain_record_url(resource),
-                                headers=self.get_headers(),
+        response = requests.get(self._get_domain_record_url(resource),
+                                headers=self._get_headers(),
                                 timeout=4)
         logging.debug(response)
         response.raise_for_status()
@@ -44,10 +45,10 @@ class GandiAPI:
         return self._get_domain_record_resource_value('AAAA')
 
     def _update_domain_record_resource(self, resource: str, value: str) -> None:
-        response = requests.put(self.get_domain_record_url(resource),
-                                headers=self.get_headers(),
-                                data=self.get_update(resource, value),
-                                timeout=3)
+        response = requests.put(self._get_domain_record_url(resource),
+                                headers=self._get_headers(),
+                                data=self._get_update(resource, value),
+                                timeout=4)
         response.raise_for_status()
 
     def update_ipv4_address(self, new_address) -> None:
