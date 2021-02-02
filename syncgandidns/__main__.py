@@ -25,12 +25,12 @@ def _get_ip_address(ip_type: str, get_ip: callable, ip_validate: callable) -> Op
 @click.command(help='''
     Sync a dynamic IP address (V4 & V6) with a Gandi DNS domain entry.\n
     The external IP address is determined automatically by default.\n
-    DOMAIN: The domain to update the DNS for.\n
-    APIKEY: Your Gandi API key.
+    DOMAIN: The domain to update the DNS for.
     ''')
 @click.version_option()
 @click.argument('domain', nargs=1, type=click.STRING, required=True)
-@click.argument('apikey', nargs=1, type=click.STRING, required=True)
+@click.option('-a', '--apikey', 'apikey', type=click.STRING, required=True, envvar='GANDI_APIKEY',
+              help='Your Gandi API key. Taken from environment variable GANDI_APIKEY if present.')
 @click.option('-no-ipv6', '--no-ipv6-update', 'no_ipv6', is_flag=True,
               help='Don\'t update the IPV6 address, will override \'-ipv6\'.')
 @click.option('-ipv4', '--ipv4-address', 'ipv4', type=IPV4_ADDRESS,
