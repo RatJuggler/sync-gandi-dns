@@ -9,7 +9,7 @@ class GandiAPI:
     def __init__(self, api_key: str, domain: str) -> None:
         self.__api_key = api_key
         self.__domain = domain
-        self.__livedns = 'https://api.gandi.net/livedns/'
+        self.__livedns = 'https://api.gandi.net/v5/livedns/'
 
     def _get_domain_records_url(self) -> str:
         return self.__livedns + 'domains/' + self.__domain + '/records'
@@ -19,7 +19,7 @@ class GandiAPI:
         return self._get_domain_records_url() + '/@/' + resource
 
     def _get_headers(self) -> Dict[str, str]:
-        return {'Authorization': '"Apikey ' + self.__api_key, 'Content-Type': 'application/json'}
+        return {'Authorization': 'Apikey ' + self.__api_key, 'Content-Type': 'application/json'}
 
     @staticmethod
     def _get_update(resource: str, value: str) -> str:
