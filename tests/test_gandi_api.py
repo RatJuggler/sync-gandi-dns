@@ -16,7 +16,7 @@ class TestGandiAPI(TestCase):
 
     def test_get_update(self) -> None:
         expected = '{"rrset_type": "RESOURCE", "rrset_values": ["VALUE"]}'
-        update = self.GANDI_API.get_update("RESOURCE", "VALUE")
+        update = self.GANDI_API._get_update("RESOURCE", "VALUE")
         self.assertEqual(expected, update)
 
     def test_get_domain_record_resource_value_unknown(self) -> None:
