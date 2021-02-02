@@ -1,25 +1,10 @@
-from typing import Optional
-
 import click
 import logging
 
-from .ipify_api import get_ipv4_address, get_ipv6_address
 from .configure_logging import configure_logging
-from .sync_ip_address import sync_ip_address
-from .ipv4address_param import IPv4AddressParamType
-from .ipv6address_param import IPv6AddressParamType
-
-IPV4_ADDRESS = IPv4AddressParamType()
-IPV6_ADDRESS = IPv6AddressParamType()
-
-
-def _get_ip_address(ip_type: str, get_ip: callable, ip_validate: callable) -> Optional[str]:
-    ip_address = get_ip()
-    logging.info("...found: {0}".format(ip_address))
-    if ip_validate(ip_address) is None:
-        logging.info("...not valid {0} won't update.".format(ip_type))
-        ip_address = None
-    return ip_address
+from .sync_ip_address import do_sync
+from .ipv4address_param import IPV4_ADDRESS
+from .ipv6address_param import IPV6_ADDRESS
 
 
 @click.command(help='''
@@ -51,15 +36,8 @@ def syncgandidns(domain: str, apikey: str, no_ipv6: bool, ipv4: str, ipv6: str, 
     :return: No meaningful return
     """
     configure_logging(level)
-    logging.info("Updating DNS for domain: {0}".format(domain))
     logging.debug("Using API key: {0}".format(apikey))
-    logging.info("Update IPV4 to: {0}".format('<automatic lookup>' if ipv4 is None else ipv4))
-    if ipv4 is None:
-        ipv4 = _get_ip_address('IPV4', get_ipv4_address, IPV4_ADDRESS.validate)
-    logging.info("Update IPV6 to: {0}".format('<disabled>' if no_ipv6 else '<automatic lookup>' if ipv6 is None else ipv6))
-    if not no_ipv6 and ipv6 is None:
-        ipv6 = _get_ip_address('IPV6', get_ipv6_address, IPV6_ADDRESS.validate)
-    sync_ip_address(domain, ipv4, ipv6, apikey)
+    do_sync(domain, apikey, no_ipv6, ipv4, ipv6)
 
 
 if __name__ == '__main__':

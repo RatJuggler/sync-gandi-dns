@@ -18,3 +18,6 @@ class IPv6AddressParamType(ParamType):
         if ipv6 is None:
             self.fail("{0} is not a valid IPV6 address".format(value), param, ctx)
         return ipv6
+
+
+IPV6_ADDRESS = IPv6AddressParamType()

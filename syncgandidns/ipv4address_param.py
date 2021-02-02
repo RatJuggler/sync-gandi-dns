@@ -18,3 +18,6 @@ class IPv4AddressParamType(ParamType):
         if ipv4 is None:
             self.fail("{0} is not a valid IPV4 address".format(value), param, ctx)
         return ipv4
+
+
+IPV4_ADDRESS = IPv4AddressParamType()
