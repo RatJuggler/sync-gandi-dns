@@ -24,6 +24,7 @@ class TestMain(TestCase):
         result = self.runner.invoke(main.syncgandidns, ['--help'])
         self.assertEqual(result.exit_code, 0)
         self.assertIn(" --version ", result.output)
+        self.assertIn(" -d, --domain ", result.output)
         self.assertIn(" -a, --apikey ", result.output)
         self.assertIn(" -no-ipv6, --no-ipv6-update ", result.output)
         self.assertIn(" -ipv4, --ipv4-address ", result.output)
@@ -38,12 +39,12 @@ class TestMain(TestCase):
         self.assertIn("syncgandidns, version ", result.output)
 
     def test_missing_domain(self) -> None:
-        result = self.runner.invoke(main.syncgandidns, [])
+        result = self.runner.invoke(main.syncgandidns, ['-a', 'secretpassword'])
         self.assertEqual(result.exit_code, 2)
-        self.assertIn('Error: Missing argument \'DOMAIN\'.', result.output)
+        self.assertIn('Error: Missing option \'-d\' / \'--domain\'.', result.output)
 
     def test_missing_apikey(self) -> None:
-        result = self.runner.invoke(main.syncgandidns, ['dinosaur.tea'])
+        result = self.runner.invoke(main.syncgandidns, ['-d', 'dinosaur.tea'])
         self.assertEqual(result.exit_code, 2)
         self.assertIn('Error: Missing option \'-a\' / \'--apikey\'.', result.output)
 
@@ -82,7 +83,7 @@ class TestMain(TestCase):
         get_ipv4_address_mock.return_value = "127.0.0.1"
         get_ipv6_address_mock.return_value = "0001:0002:0003:0004:0005:0006:0007:0008"
         with LogCapture(level=cl.logging.INFO) as log_out:
-            result = self.runner.invoke(main.syncgandidns, ['pickle.jar',
+            result = self.runner.invoke(main.syncgandidns, ['-d', 'pickle.jar',
                                                             '-a', 'secretpassword'])
         self.assertEqual(result.exit_code, 0)
         _init_log_check(log_out,
@@ -96,7 +97,7 @@ class TestMain(TestCase):
     @patch('syncgandidns.__main__.sync_ip_address')
     def test_override_both(self, sync_ip_address_mock: MagicMock) -> None:
         with LogCapture(level=cl.logging.INFO) as log_out:
-            result = self.runner.invoke(main.syncgandidns, ['pickle.jar',
+            result = self.runner.invoke(main.syncgandidns, ['-d', 'pickle.jar',
                                                             '-a', 'secretpassword',
                                                             '-ipv4', '192.168.0.1',
                                                             '-ipv6', '2001:0db8:85a3:0000:0000:8a2e:0370:7334'])
@@ -114,7 +115,7 @@ class TestMain(TestCase):
                        get_ipv4_address_mock: MagicMock) -> None:
         get_ipv4_address_mock.return_value = "127.0.0.1"
         with LogCapture(level=cl.logging.DEBUG) as log_out:
-            result = self.runner.invoke(main.syncgandidns, ['jam.jar',
+            result = self.runner.invoke(main.syncgandidns, ['-d', 'jam.jar',
                                                             '-a', 'secretpassword',
                                                             '-ipv6', '2701:db8:86a3::8a3e:371:7734'])
         self.assertEqual(result.exit_code, 0)
