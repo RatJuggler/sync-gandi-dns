@@ -10,8 +10,8 @@ from syncgandidns.gandi_api import GandiAPI
 class TestGandiAPI(TestCase):
 
     def setUp(self) -> None:
-        api_key = os.getenv("GANDI_APIKEY")
-        test_domain = os.getenv("GANDI_DOMAIN")
+        api_key = os.getenv("GANDI_TEST_APIKEY")
+        test_domain = os.getenv("GANDI_TEST_DOMAIN")
         self.GANDI_API = GandiAPI(api_key, test_domain)
 
     def test_get_update(self) -> None:
