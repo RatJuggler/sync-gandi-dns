@@ -38,6 +38,15 @@ class GandiAPI:
             value = values[0]
         return value
 
+    def get_domain_records(self) -> str:
+        response = requests.get(self._get_domain_records_url(),
+                                headers=self._get_headers(),
+                                timeout=4)
+        logging.debug(response)
+        response.raise_for_status()
+        logging.debug(response.json())
+        return response.json()
+
     def get_ipv4_address(self) -> str:
         return self._get_domain_record_resource_value('A')
 
