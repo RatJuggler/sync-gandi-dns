@@ -1,7 +1,8 @@
 from unittest import TestCase
-from unittest.mock import patch, MagicMock
-from testfixtures import LogCapture
 from click.testing import CliRunner
+
+from testfixtures import LogCapture
+from unittest.mock import patch, MagicMock
 
 import syncgandidns.__main__ as main
 import syncgandidns.configure_logging as cl
@@ -30,6 +31,7 @@ class TestMain(TestCase):
         self.assertIn(" -ipv4, --ipv4-address ", result.output)
         self.assertIn(" -ipv6, --ipv6-address ", result.output)
         self.assertIn(" -l, --log-level ", result.output)
+        self.assertIn(" -t, --test ", result.output)
         self.assertIn(" --help ", result.output)
 
     # TODO: Requires "python3 setup.py sdist" to have been run to pass, review.
@@ -60,69 +62,17 @@ class TestMain(TestCase):
         self.assertIn('Error: Invalid value for \'-ipv6\' / \'--ipv6-address\': localhost is not a valid IPV6 address',
                       result.output)
 
-    def _found_check(self, msg: str) -> str:
-        found = '...found:'
-        self.assertTrue((msg.startswith(found)))
-        return msg[len(found) + 1:]
-
-    def _found_ipv4_check(self, msg: str, ipv4: str) -> None:
-        ipv4_found = self._found_check(msg)
-        self.assertEqual(ipv4_found, ipv4)
-
-    def _found_ipv6_check(self, msg: str, ipv6: str) -> None:
-        ipv6_found = self._found_check(msg)
-        self.assertEqual(ipv6_found, ipv6)
-
-    @patch('syncgandidns.__main__.get_ipv4_address')
-    @patch('syncgandidns.__main__.get_ipv6_address')
-    @patch('syncgandidns.__main__.sync_ip_address')
-    def test_automatic(self,
-                       sync_ip_address_mock: MagicMock,
-                       get_ipv6_address_mock: MagicMock,
-                       get_ipv4_address_mock: MagicMock) -> None:
-        get_ipv4_address_mock.return_value = "127.0.0.1"
-        get_ipv6_address_mock.return_value = "0001:0002:0003:0004:0005:0006:0007:0008"
-        with LogCapture(level=cl.logging.INFO) as log_out:
-            result = self.runner.invoke(main.syncgandidns, ['-d', 'pickle.jar',
-                                                            '-a', 'secretpassword'])
-        self.assertEqual(0, result.exit_code)
-        _init_log_check(log_out,
-                        "Updating DNS for domain: pickle.jar",
-                        "Update IPV4 to: <automatic lookup>",
-                        "Update IPV6 to: <automatic lookup>")
-        self._found_ipv4_check(log_out.records[2].msg, get_ipv4_address_mock.return_value)
-        self._found_ipv6_check(log_out.records[4].msg, get_ipv6_address_mock.return_value)
-        sync_ip_address_mock.assert_called_once()
-
-    @patch('syncgandidns.__main__.sync_ip_address')
-    def test_override_both(self, sync_ip_address_mock: MagicMock) -> None:
+    @patch('syncgandidns.__main__.GandiAPI')
+    def test_test(self,
+                  gandi_api_mock: MagicMock) -> None:
+        gandi_api_mock.return_value.get_domain_records.return_value = '<Test DNS records output>'
         with LogCapture(level=cl.logging.INFO) as log_out:
             result = self.runner.invoke(main.syncgandidns, ['-d', 'pickle.jar',
                                                             '-a', 'secretpassword',
-                                                            '-ipv4', '192.168.0.1',
-                                                            '-ipv6', '2001:0db8:85a3:0000:0000:8a2e:0370:7334'])
+                                                            '-t'])
         self.assertEqual(0, result.exit_code)
         _init_log_check(log_out,
-                        "Updating DNS for domain: pickle.jar",
-                        "Update IPV4 to: 192.168.0.1",
-                        "Update IPV6 to: 2001:db8:85a3::8a2e:370:7334")
-        sync_ip_address_mock.assert_called_once()
-
-    @patch('syncgandidns.__main__.get_ipv4_address')
-    @patch('syncgandidns.__main__.sync_ip_address')
-    def test_debug_log(self,
-                       sync_ip_address_mock: MagicMock,
-                       get_ipv4_address_mock: MagicMock) -> None:
-        get_ipv4_address_mock.return_value = "127.0.0.1"
-        with LogCapture(level=cl.logging.DEBUG) as log_out:
-            result = self.runner.invoke(main.syncgandidns, ['-d', 'jam.jar',
-                                                            '-a', 'secretpassword',
-                                                            '-ipv6', '2701:db8:86a3::8a3e:371:7734'])
-        self.assertEqual(0, result.exit_code)
-        _init_log_check(log_out,
-                        "Updating DNS for domain: jam.jar",
-                        "Update IPV4 to: <automatic lookup>",
-                        "Update IPV6 to: 2701:db8:86a3::8a3e:371:7734")
-        log_out.check_present(('root', cl.logging.getLevelName(cl.logging.DEBUG), "Using API key: secretpassword"))
-        self._found_ipv4_check(log_out.records[3].msg, get_ipv4_address_mock.return_value)
-        sync_ip_address_mock.assert_called_once()
+                        'Testing access to DNS records for domain: pickle.jar',
+                        'DNS Records retrieved:',
+                        '<Test DNS records output>')
+        gandi_api_mock.assert_called_once()
