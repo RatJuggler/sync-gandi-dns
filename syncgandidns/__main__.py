@@ -10,8 +10,8 @@ from .sync_ip_address import do_sync
 
 def test_access(domain: str, apikey: str) -> None:
     logging.info("Testing access to DNS records for domain: {0}".format(domain))
-    gandi_api = GandiAPI(apikey, domain)
-    dns_records = gandi_api.get_domain_records()
+    gandi_api = GandiAPI(apikey)
+    dns_records = gandi_api.get_domain_records(domain)
     logging.info("DNS Records retrieved:")
     logging.info(dns_records)
 

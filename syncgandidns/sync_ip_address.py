@@ -7,15 +7,15 @@ from .ipify_api import get_ipv4_address, get_ipv6_address
 from .gandi_api import GandiAPI
 
 
-def _sync_ip(ip_type: str, new_ip: Optional[str], get_ip: callable, update_ip: callable) -> None:
-    current_ip = get_ip()
+def _sync_ip(domain: str, ip_type: str, new_ip: Optional[str], get_ip: callable, update_ip: callable) -> None:
+    current_ip = get_ip(domain)
     logging.info("Current {0}: {1}".format(ip_type, current_ip))
     if new_ip is None:
         logging.info("New {0} not supplied so not updated.".format(ip_type))
     elif new_ip == current_ip:
         logging.info("{0} already current so not updated.".format(ip_type))
     else:
-        update_ip(new_ip)
+        update_ip(domain, new_ip)
         logging.info("{0} updated to: {1}".format(ip_type, new_ip))
 
 
@@ -36,6 +36,6 @@ def do_sync(domain: str, apikey: str, no_ipv4: bool, ipv4: Optional[str], no_ipv
     logging.info("Update IPV6 to: {0}".format('<disabled>' if no_ipv6 else '<automatic lookup>' if ipv6 is None else ipv6))
     if not no_ipv6 and ipv6 is None:
         ipv6 = _get_ip_address('IPV6', get_ipv6_address, IPV6_ADDRESS.validate)
-    gandi_api = GandiAPI(apikey, domain)
-    _sync_ip('IPV4', ipv4, gandi_api.get_ipv4_address, gandi_api.update_ipv4_address)
-    _sync_ip('IPV6', ipv6, gandi_api.get_ipv6_address, gandi_api.update_ipv6_address)
+    gandi_api = GandiAPI(apikey)
+    _sync_ip(domain, 'IPV4', ipv4, gandi_api.get_ipv4_address, gandi_api.update_ipv4_address)
+    _sync_ip(domain, 'IPV6', ipv6, gandi_api.get_ipv6_address, gandi_api.update_ipv6_address)
