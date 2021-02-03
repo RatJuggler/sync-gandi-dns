@@ -32,15 +32,20 @@ def _get_ip_address(ip_type: str, get_ip: callable, ip_validate: callable) -> Op
     return None
 
 
+def _get_update_ip(ip_type: str, no_ip: bool, ip: Optional[str], get_ip: callable, ip_validate: callable):
+    logging.info("Update {0} to: {1}".format(ip_type, '<disabled>' if no_ip else '<automatic lookup>' if ip is None else ip))
+    if no_ip:
+        return None
+    if ip is None:
+        return _get_ip_address(ip_type, get_ip, ip_validate)
+    return ip
+
+
 def do_sync(domains: Tuple[str, ...], apikey: str, no_ipv4: bool, ipv4: Optional[str], no_ipv6: bool, ipv6: Optional[str]) -> None:
-    logging.info("Update IPV4 to: {0}".format('<disabled>' if no_ipv4 else '<automatic lookup>' if ipv4 is None else ipv4))
-    if not no_ipv4 and ipv4 is None:
-        ipv4 = _get_ip_address('IPV4', get_ipv4_address, IPV4_ADDRESS.validate)
-    logging.info("Update IPV6 to: {0}".format('<disabled>' if no_ipv6 else '<automatic lookup>' if ipv6 is None else ipv6))
-    if not no_ipv6 and ipv6 is None:
-        ipv6 = _get_ip_address('IPV6', get_ipv6_address, IPV6_ADDRESS.validate)
+    update_ipv4 = _get_update_ip('IPV4', no_ipv4, ipv4, get_ipv4_address, IPV4_ADDRESS.validate)
+    update_ipv6 = _get_update_ip('IPV6', no_ipv6, ipv6, get_ipv6_address, IPV6_ADDRESS.validate)
     gandi_api = GandiAPI(apikey)
     for domain in domains:
         logging.info("Updating DNS for domain: {0}".format(domain))
-        _sync_ip(domain, 'IPV4', ipv4, gandi_api.get_ipv4_address, gandi_api.update_ipv4_address)
-        _sync_ip(domain, 'IPV6', ipv6, gandi_api.get_ipv6_address, gandi_api.update_ipv6_address)
+        _sync_ip(domain, 'IPV4', update_ipv4, gandi_api.get_ipv4_address, gandi_api.update_ipv4_address)
+        _sync_ip(domain, 'IPV6', update_ipv6, gandi_api.get_ipv6_address, gandi_api.update_ipv6_address)
