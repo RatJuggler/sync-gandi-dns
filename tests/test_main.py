@@ -8,12 +8,11 @@ import syncgandidns.__main__ as main
 import syncgandidns.configure_logging as cl
 
 
-def _init_log_check(log_out: LogCapture, expected1: str, expected2: str, expected3: str) -> None:
+def _log_check(log_out: LogCapture, *expects: str) -> None:
     root = 'root'
     log_level = cl.logging.getLevelName(cl.logging.INFO)
-    log_out.check_present((root, log_level, expected1),
-                          (root, log_level, expected2),
-                          (root, log_level, expected3))
+    for expected in expects:
+        log_out.check_present((root, log_level, expected))
 
 
 class TestMain(TestCase):
@@ -59,24 +58,25 @@ class TestMain(TestCase):
     def test_invalid_ipv4_address(self) -> None:
         result = self.runner.invoke(main.syncgandidns, ['-ipv4', 'localhost'])
         self.assertEqual(2, result.exit_code)
-        self.assertIn("Error: Invalid value for '-ipv4' / '--ipv4-address': 'localhost' is not a valid IPV4 address.", result.output)
+        self.assertIn("Error: Invalid value for '-ipv4' / '--ipv4-address': 'localhost' is not a valid IPV4 address.",
+                      result.output)
 
     def test_invalid_ipv6_address(self) -> None:
         result = self.runner.invoke(main.syncgandidns, ['-ipv6', 'localhost'])
         self.assertEqual(2, result.exit_code)
-        self.assertIn("Error: Invalid value for '-ipv6' / '--ipv6-address': 'localhost' is not a valid IPV6 address.", result.output)
+        self.assertIn("Error: Invalid value for '-ipv6' / '--ipv6-address': 'localhost' is not a valid IPV6 address.",
+                      result.output)
 
     @patch('syncgandidns.__main__.GandiAPI')
     def test_test(self,
                   gandi_api_mock: MagicMock) -> None:
-        gandi_api_mock.return_value.get_domain_records.return_value = '<Test DNS records output>'
+        gandi_api_mock.return_value.get_domain_records.return_value = ['<DNS record 1>', '<DNS record 3>', '<DNS record 3>']
         with LogCapture(level=cl.logging.INFO) as log_out:
             result = self.runner.invoke(main.syncgandidns, ['-d', 'pickle.jar',
                                                             '-a', 'secretpassword',
                                                             '-t'])
         self.assertEqual(0, result.exit_code)
-        _init_log_check(log_out,
-                        'Testing access to DNS records for domain: pickle.jar',
-                        'DNS Records retrieved:',
-                        '<Test DNS records output>')
+        _log_check(log_out,
+                   'Testing access to DNS records for domain: pickle.jar',
+                   '3 DNS Records retrieved!')
         gandi_api_mock.assert_called_once()
