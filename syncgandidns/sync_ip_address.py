@@ -9,21 +9,21 @@ from .gandi_api import GandiAPI
 
 def _sync_ip(domain: str, ip_type: str, new_ip: Optional[str], get_ip: callable, update_ip: callable) -> None:
     current_ip = get_ip(domain)
-    logging.info("Current {0}: {1}".format(ip_type, current_ip))
+    logging.info("{0} current {1} address: {2}".format(domain, ip_type, current_ip))
     if new_ip is None:
-        logging.info("New {0} not supplied so not updated.".format(ip_type))
+        logging.info("{0} not updated, new {1} address not supplied!".format(domain, ip_type))
     elif new_ip == current_ip:
-        logging.info("{0} already current so not updated.".format(ip_type))
+        logging.info("{0} {1} address already current so not updated.".format(domain, ip_type))
     else:
         update_ip(domain, new_ip)
-        logging.info("{0} updated to: {1}".format(ip_type, new_ip))
+        logging.info("{0} {1} address updated to: {2}".format(domain, ip_type, new_ip))
 
 
 def _get_ip_address(ip_type: str, get_ip: callable, ip_validate: callable) -> Optional[str]:
     ip_address = get_ip()
-    logging.info("...found: {0}".format(ip_address))
+    logging.info("Automatic {0} lookup found: {1}".format(ip_type, ip_address))
     if ip_validate(ip_address) is None:
-        logging.info("...not valid {0} won't update.".format(ip_type))
+        logging.error("Automatic {0} lookup found invalid address '{1}', update cancelled.".format(ip_type, ip_address))
         ip_address = None
     return ip_address
 
