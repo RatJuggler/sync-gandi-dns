@@ -4,31 +4,29 @@ from typing import Dict
 import requests
 
 
-URL = "https://api.gandi.net/v5/livedns/domains/"
-RECORDS = "/records/@/"  # @ is the DNS record name (rrset_name).
-A_RECORD = 'A'
-AAAA_RECORD = 'AAAA'
-
-
 class GandiAPI:
 
-    def __init__(self, api_key: str, domain: str) -> None:
-        self.api_key = api_key
-        self.domain = domain
+    def __init__(self, api_key: str) -> None:
+        self.__api_key = api_key
+        self.__livedns = 'https://api.gandi.net/v5/livedns/'
 
-    def get_rest_url(self, resource: str) -> str:
-        return URL + self.domain + RECORDS + resource
+    def _get_domain_records_url(self, domain: str) -> str:
+        return self.__livedns + 'domains/' + domain + '/records'
 
-    def get_headers(self) -> Dict[str, str]:
-        return {"Authorization": "Apikey " + self.api_key, "Content-Type": "application/json"}
+    def _get_domain_record_url(self, domain: str, resource: str) -> str:
+        # @ is the DNS record name (rrset_name).
+        return self._get_domain_records_url(domain) + '/@/' + resource
+
+    def _get_headers(self) -> Dict[str, str]:
+        return {'Authorization': 'Apikey ' + self.__api_key, 'Content-Type': 'application/json'}
 
     @staticmethod
-    def get_update(resource: str, value: str) -> str:
+    def _get_update(resource: str, value: str) -> str:
         return '{{"rrset_type": "{0}", "rrset_values": ["{1}"]}}'.format(resource, value)
 
-    def _get_domain_record_resource_value(self, resource: str) -> str:
-        response = requests.get(self.get_rest_url(resource),
-                                headers=self.get_headers(),
+    def _get_domain_record_resource_value(self, domain: str, resource: str) -> str:
+        response = requests.get(self._get_domain_record_url(domain, resource),
+                                headers=self._get_headers(),
                                 timeout=4)
         logging.debug(response)
         response.raise_for_status()
@@ -39,21 +37,32 @@ class GandiAPI:
             value = values[0]
         return value
 
-    def get_ipv4_address(self) -> str:
-        return self._get_domain_record_resource_value(A_RECORD)
+    def get_domain_records(self, domain: str) -> str:
+        response = requests.get(self._get_domain_records_url(domain),
+                                headers=self._get_headers(),
+                                timeout=4)
+        logging.debug(response)
+        response.raise_for_status()
+        if logging.getLogger().isEnabledFor(logging.DEBUG):
+            for record in response.json():
+                logging.debug(record)
+        return response.json()
 
-    def get_ipv6_address(self) -> str:
-        return self._get_domain_record_resource_value(AAAA_RECORD)
+    def get_ipv4_address(self, domain: str) -> str:
+        return self._get_domain_record_resource_value(domain, 'A')
 
-    def _update_domain_record_resource(self, resource: str, value: str) -> None:
-        response = requests.put(self.get_rest_url(resource),
-                                headers=self.get_headers(),
-                                data=self.get_update(resource, value),
-                                timeout=3)
+    def get_ipv6_address(self, domain: str) -> str:
+        return self._get_domain_record_resource_value(domain, 'AAAA')
+
+    def _update_domain_record_resource(self, domain: str, resource: str, value: str) -> None:
+        response = requests.put(self._get_domain_record_url(domain, resource),
+                                headers=self._get_headers(),
+                                data=self._get_update(resource, value),
+                                timeout=4)
         response.raise_for_status()
 
-    def update_ipv4_address(self, new_address) -> None:
-        self._update_domain_record_resource(A_RECORD, new_address)
+    def update_ipv4_address(self, domain: str, new_address: str) -> None:
+        self._update_domain_record_resource(domain, 'A', new_address)
 
-    def update_ipv6_address(self, new_address) -> None:
-        self._update_domain_record_resource(AAAA_RECORD, new_address)
+    def update_ipv6_address(self, domain: str, new_address: str) -> None:
+        self._update_domain_record_resource(domain, 'AAAA', new_address)

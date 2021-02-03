@@ -17,3 +17,6 @@ dist/
 
 # Environments
 venv/
+
+# Configuration files
+**/env.list
