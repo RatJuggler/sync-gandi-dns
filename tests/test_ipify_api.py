@@ -26,7 +26,7 @@ class TestIpifyAPI(TestCase):
             ipv4 = get_ipv4_address()
             if self.validateIPV4(ipv4) is None:
                 self.fail("{0} is not a valid IPV4 address".format(ipv4))
-        except Exception as e:
+        except Exception:
             self.assertTrue(True, 'Allow ipify IPV4 lookup failure to pass.')
 
     def test_get_ipv6_address(self) -> None:
@@ -34,5 +34,5 @@ class TestIpifyAPI(TestCase):
             ipv6 = get_ipv6_address()
             if self.validateIPV6(ipv6) is None and self.validateIPV4(ipv6) is None:
                 self.fail("{0} is not a valid IPV6 or IPV4 address".format(ipv6))
-        except Exception as e:
+        except Exception:
             self.assertTrue(True, 'Allow ipify IPV6 lookup failure to pass.')
