@@ -43,7 +43,9 @@ class GandiAPI:
                                 timeout=4)
         logging.debug(response)
         response.raise_for_status()
-        logging.debug(response.json())
+        if logging.getLogger().isEnabledFor(logging.DEBUG):
+            for record in response.json():
+                logging.debug(record)
         return response.json()
 
     def get_ipv4_address(self, domain: str) -> str:
