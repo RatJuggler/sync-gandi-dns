@@ -30,5 +30,8 @@ class DomainParamType(ParamType):
             self.fail("'{0}' is not a valid domain.".format(value), param, ctx)
         return domain
 
+    def split_envvar_value(self, rv):
+        return rv.split(';')
+
 
 DOMAIN = DomainParamType()
