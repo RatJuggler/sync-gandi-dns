@@ -5,7 +5,7 @@ with open("README.md", "r") as fh:
 
 setup(
     name='syncgandidns',
-    version='0.0.3',
+    version='0.1.0',
     description='Sync a dynamic IP address with a Gandi DNS domain entry.',
     long_description=long_description,
     long_description_content_type='text/markdown',
