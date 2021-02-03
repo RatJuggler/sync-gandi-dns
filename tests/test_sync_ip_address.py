@@ -166,6 +166,6 @@ class TestSyncIPAddress(TestCase):
                    "Update IPV4 to: <disabled>",
                    "Update IPV6 to: <disabled>",
                    "{0} current IPV4 address: {1}".format(self.DUMMY_DOMAIN, self.DUMMY_GANDI_IPV4),
-                   "{0} not updated, new IPV4 address not supplied!".format(self.DUMMY_DOMAIN),
+                   "{0} IPV4 address not updated, new address not supplied!".format(self.DUMMY_DOMAIN),
                    "{0} current IPV6 address: {1}".format(self.DUMMY_DOMAIN, self.DUMMY_GANDI_IPV6),
-                   "{0} not updated, new IPV6 address not supplied!".format(self.DUMMY_DOMAIN))
+                   "{0} IPV6 address not updated, new address not supplied!".format(self.DUMMY_DOMAIN))
