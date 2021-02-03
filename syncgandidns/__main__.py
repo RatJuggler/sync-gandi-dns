@@ -1,6 +1,7 @@
 import click
 import logging
 
+from .domain_param import DOMAIN
 from .ipv4address_param import IPV4_ADDRESS
 from .ipv6address_param import IPV6_ADDRESS
 from .configure_logging import configure_logging
@@ -21,7 +22,7 @@ def test_access(domain: str, apikey: str) -> None:
     The external IP address is determined automatically by default.
     ''')
 @click.version_option()
-@click.option('-d', '--domain', 'domain', type=click.STRING, required=True, envvar='GANDI_DOMAIN',
+@click.option('-d', '--domain', 'domain', type=DOMAIN, required=True, envvar='GANDI_DOMAIN',
               help='The domain to update the DNS for. Taken from environment variable GANDI_DOMAIN if not supplied.')
 @click.option('-a', '--apikey', 'apikey', type=click.STRING, required=True, envvar='GANDI_APIKEY',
               help='Your Gandi API key. Taken from environment variable GANDI_APIKEY if not supplied.')
