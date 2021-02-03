@@ -1,7 +1,7 @@
 import click
 import logging
 
-from typing import Tuple
+from typing import Optional, Tuple
 
 from .domain_param import DOMAIN
 from .ipv4address_param import IPV4_ADDRESS
@@ -42,7 +42,8 @@ def test_access(domains: Tuple[str, ...], apikey: str) -> None:
               help='Show additional logging information.', default='INFO', show_default=True)
 @click.option('-t', '--test', 'test', default=False, is_flag=True,
               help="Test the Gandi API key and exit.", show_default=True)
-def syncgandidns(domains: Tuple[str, ...], apikey: str, ipv4: str, no_ipv4: bool, ipv6: str, no_ipv6: bool, level: str, test: bool) -> None:
+def syncgandidns(domains: Tuple[str, ...], apikey: str, ipv4: Optional[str], no_ipv4: bool, ipv6: Optional[str], no_ipv6: bool,
+                 level: Optional[str], test: bool) -> None:
     """
     Sync local dynamic IP address with Gandi DNS.
     :param domains: To sync the IP address for
