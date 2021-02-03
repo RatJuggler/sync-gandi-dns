@@ -6,8 +6,7 @@
 This is a simple Python package which allows the IP address records for domains registered with [Gandi](https://www.gandi.net)
 to be kept up to date with the dynamic public values assigned to you by your ISP.
 
-To keep it simple it can only update a single domain at a time but can update resource records for both IPV4 (`A`) and IPV6 
-(`AAAA`).
+It can be used to update the resource record for either IPV4 (`A`) or IPV6 (`AAAA`) or both, for a single or multiple domains.
 
 ## How it works
 
@@ -32,24 +31,25 @@ Then install/update as a Python package:
     $ sudo pip3 install -U .
 
 ## Running
-
-The domain to update, and the API key can be supplied as options or environment variables.
 ```
 $ syncgandidns --help
-Usage: syncgandidns [OPTIONS] DOMAIN
+Usage: syncgandidns [OPTIONS]
 
   Sync a dynamic IP address (V4 & V6) with a Gandi DNS domain entry.
 
   The external IP address is determined automatically by default.
 
+  Domains can be set using the GANDI_DOMAINS environment variable. For
+  multiple domains separate with a ';'.
+
+  The Gandi API key can be set using the GANDI_APIKEY environment variable.
+
 Options:
   --version                       Show the version and exit.
-  -d, --domain TEXT               The domain to update the DNS for. Taken from
-                                  environment variable GANDI_DOMAIN if not
-                                  supplied.  [required]
-  -a, --apikey TEXT               Your Gandi API key. Taken from environment
-                                  variable GANDI_APIKEY if not supplied.
+  -d, --domain DOMAIN             A domain to update the DNS for. Repeat the
+                                  option to update multiple domains.
                                   [required]
+  -a, --apikey TEXT               Your Gandi API key.  [required]
   -ipv4, --ipv4-address IPV4_ADDRESS
                                   Override the IPV4 address to update the
                                   domain DNS with.
@@ -71,15 +71,14 @@ Options:
 
 Alternatively docker build and compose files are available which create a standalone image to run the sync on an hourly schedule.
 
-Edit the *docker/crontab.txt* file for your domain and preferred timings. If you have multiple domains just repeat the entries for
-each domain.
+Edit the *docker/crontab.txt* file to set your preferred timings.
 
 Create the image with: `docker build -f docker/Dockerfile -t sync-gandi-dns:local .`
 
-We need to be careful that the Gandi API key is not included in the image in case it is pushed to a public repository (and it's 
-also just best practice). There are a number of ways to inject the key into the image but probably the easiest is to create an 
-`env.list` file from the supplied template, set the key in it and then run the image with the `--env-file` option. You could also
-set the domain here if you have a single domain.
+The environment variables should be used to set the domains to update, and the Gandi API key. It is important that the API key is 
+not included in the image in case it is pushed to a public repository (and it's also just best practice). There are a number of 
+ways to do this but probably the easiest is to create an `env.list` file from the supplied template, set the domains and key in 
+this file and then run the image with the `--env-file` option.
 
     docker run sync-gandi-dns:local -d --env-file ./docker/env.list
 
