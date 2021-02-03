@@ -1,5 +1,5 @@
 import logging
-from typing import Optional
+from typing import Optional, Tuple
 
 from .ipv4address_param import IPV4_ADDRESS
 from .ipv6address_param import IPV6_ADDRESS
@@ -28,8 +28,7 @@ def _get_ip_address(ip_type: str, get_ip: callable, ip_validate: callable) -> Op
     return ip_address
 
 
-def do_sync(domain: str, apikey: str, no_ipv4: bool, ipv4: Optional[str], no_ipv6: bool, ipv6: Optional[str]) -> None:
-    logging.info("Updating DNS for domain: {0}".format(domain))
+def do_sync(domains: Tuple[str, ...], apikey: str, no_ipv4: bool, ipv4: Optional[str], no_ipv6: bool, ipv6: Optional[str]) -> None:
     logging.info("Update IPV4 to: {0}".format('<disabled>' if no_ipv4 else '<automatic lookup>' if ipv4 is None else ipv4))
     if not no_ipv4 and ipv4 is None:
         ipv4 = _get_ip_address('IPV4', get_ipv4_address, IPV4_ADDRESS.validate)
@@ -37,5 +36,7 @@ def do_sync(domain: str, apikey: str, no_ipv4: bool, ipv4: Optional[str], no_ipv
     if not no_ipv6 and ipv6 is None:
         ipv6 = _get_ip_address('IPV6', get_ipv6_address, IPV6_ADDRESS.validate)
     gandi_api = GandiAPI(apikey)
-    _sync_ip(domain, 'IPV4', ipv4, gandi_api.get_ipv4_address, gandi_api.update_ipv4_address)
-    _sync_ip(domain, 'IPV6', ipv6, gandi_api.get_ipv6_address, gandi_api.update_ipv6_address)
+    for domain in domains:
+        logging.info("Updating DNS for domain: {0}".format(domain))
+        _sync_ip(domain, 'IPV4', ipv4, gandi_api.get_ipv4_address, gandi_api.update_ipv4_address)
+        _sync_ip(domain, 'IPV6', ipv6, gandi_api.get_ipv6_address, gandi_api.update_ipv6_address)

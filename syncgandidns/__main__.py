@@ -1,6 +1,8 @@
 import click
 import logging
 
+from typing import Tuple
+
 from .domain_param import DOMAIN
 from .ipv4address_param import IPV4_ADDRESS
 from .ipv6address_param import IPV6_ADDRESS
@@ -9,12 +11,12 @@ from .gandi_api import GandiAPI
 from .sync_ip_address import do_sync
 
 
-def test_access(domain: str, apikey: str) -> None:
-    logging.info("Testing access to DNS records for domain: {0}".format(domain))
+def test_access(domains: Tuple[str, ...], apikey: str) -> None:
     gandi_api = GandiAPI(apikey)
-    dns_records = gandi_api.get_domain_records(domain)
-    logging.info("DNS Records retrieved:")
-    logging.info(dns_records)
+    for domain in domains:
+        logging.info("Testing access to DNS records for domain: {0}".format(domain))
+        dns_records = gandi_api.get_domain_records(domain)
+        logging.info("{0} DNS Records retrieved!".format(len(dns_records)))
 
 
 @click.command(help='''
@@ -22,7 +24,7 @@ def test_access(domain: str, apikey: str) -> None:
     The external IP address is determined automatically by default.
     ''')
 @click.version_option()
-@click.option('-d', '--domain', 'domain', type=DOMAIN, required=True, envvar='GANDI_DOMAIN',
+@click.option('-d', '--domain', 'domains', type=DOMAIN, required=True, multiple=True, envvar='GANDI_DOMAINS',
               help='The domain to update the DNS for. Taken from environment variable GANDI_DOMAIN if not supplied.')
 @click.option('-a', '--apikey', 'apikey', type=click.STRING, required=True, envvar='GANDI_APIKEY',
               help='Your Gandi API key. Taken from environment variable GANDI_APIKEY if not supplied.')
@@ -38,10 +40,10 @@ def test_access(domain: str, apikey: str) -> None:
               help='Show additional logging information.', default='INFO', show_default=True)
 @click.option('-t', '--test', 'test', default=False, is_flag=True,
               help="Test the Gandi API key and exit.", show_default=True)
-def syncgandidns(domain: str, apikey: str, ipv4: str, no_ipv4: bool, ipv6: str, no_ipv6: bool, level: str, test: bool) -> None:
+def syncgandidns(domains: Tuple[str, ...], apikey: str, ipv4: str, no_ipv4: bool, ipv6: str, no_ipv6: bool, level: str, test: bool) -> None:
     """
     Sync local dynamic IP address with Gandi DNS.
-    :param domain: To sync IP address for
+    :param domains: To sync the IP address for
     :param apikey: To access the API with
     :param ipv4: To sync to the domain DNS
     :param no_ipv4: Don't update IPV4
@@ -54,9 +56,9 @@ def syncgandidns(domain: str, apikey: str, ipv4: str, no_ipv4: bool, ipv6: str, 
     configure_logging(level)
     logging.debug("Using API key: {0}".format(apikey))
     if test:
-        test_access(domain, apikey)
+        test_access(domains, apikey)
     else:
-        do_sync(domain, apikey, no_ipv4, ipv4, no_ipv6, ipv6)
+        do_sync(domains, apikey, no_ipv4, ipv4, no_ipv6, ipv6)
 
 
 if __name__ == '__main__':
