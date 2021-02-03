@@ -20,12 +20,16 @@ def _sync_ip(domain: str, ip_type: str, new_ip: Optional[str], get_ip: callable,
 
 
 def _get_ip_address(ip_type: str, get_ip: callable, ip_validate: callable) -> Optional[str]:
-    ip_address = get_ip()
-    logging.info("Automatic {0} lookup found: {1}".format(ip_type, ip_address))
-    if ip_validate(ip_address) is None:
+    try:
+        ip_address = get_ip()
+        logging.info("Automatic {0} lookup found: {1}".format(ip_type, ip_address))
+        if ip_validate(ip_address):
+            return ip_address
         logging.error("Automatic {0} lookup found invalid address '{1}', update cancelled.".format(ip_type, ip_address))
-        ip_address = None
-    return ip_address
+    except Exception as e:
+        logging.debug(e.__str__())
+        logging.error("Automatic {0} lookup call failed, {0} update cancelled!".format(ip_type))
+    return None
 
 
 def do_sync(domains: Tuple[str, ...], apikey: str, no_ipv4: bool, ipv4: Optional[str], no_ipv6: bool, ipv6: Optional[str]) -> None:
