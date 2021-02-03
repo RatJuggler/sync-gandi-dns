@@ -16,7 +16,7 @@ class IPv4AddressParamType(ParamType):
     def convert(self, value, param, ctx):
         ipv4 = self.validate(value)
         if ipv4 is None:
-            self.fail("{0} is not a valid IPV4 address".format(value), param, ctx)
+            self.fail("'{0}' is not a valid IPV4 address.".format(value), param, ctx)
         return ipv4
 
 

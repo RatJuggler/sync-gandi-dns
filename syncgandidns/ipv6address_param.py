@@ -16,7 +16,7 @@ class IPv6AddressParamType(ParamType):
     def convert(self, value, param, ctx):
         ipv6 = self.validate(value)
         if ipv6 is None:
-            self.fail("{0} is not a valid IPV6 address".format(value), param, ctx)
+            self.fail("'{0}' is not a valid IPV6 address.".format(value), param, ctx)
         return ipv6
 
 

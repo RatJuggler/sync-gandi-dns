@@ -27,7 +27,7 @@ class DomainParamType(ParamType):
     def convert(self, value, param, ctx):
         domain = self.validate(value)
         if domain is None:
-            self.fail("{0} is not a valid domain".format(value), param, ctx)
+            self.fail("'{0}' is not a valid domain.".format(value), param, ctx)
         return domain
 
 
