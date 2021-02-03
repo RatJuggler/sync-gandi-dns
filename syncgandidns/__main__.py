@@ -21,13 +21,15 @@ def test_access(domains: Tuple[str, ...], apikey: str) -> None:
 
 @click.command(help='''
     Sync a dynamic IP address (V4 & V6) with a Gandi DNS domain entry.\n
-    The external IP address is determined automatically by default.
+    The external IP address is determined automatically by default.\n
+    Domains can be set using the GANDI_DOMAINS environment variable. For multiple domains separate with a ';'.\n
+    The Gandi API key can be set using the GANDI_APIKEY environment variable.
     ''')
 @click.version_option()
 @click.option('-d', '--domain', 'domains', type=DOMAIN, required=True, multiple=True, envvar='GANDI_DOMAINS',
-              help='The domain to update the DNS for. Taken from environment variable GANDI_DOMAIN if not supplied.')
+              help='A domain to update the DNS for. Repeat the option to update multiple domains.')
 @click.option('-a', '--apikey', 'apikey', type=click.STRING, required=True, envvar='GANDI_APIKEY',
-              help='Your Gandi API key. Taken from environment variable GANDI_APIKEY if not supplied.')
+              help='Your Gandi API key.')
 @click.option('-ipv4', '--ipv4-address', 'ipv4', type=IPV4_ADDRESS,
               help='Override the IPV4 address to update the domain DNS with.')
 @click.option('-no-ipv4', '--no-ipv4-update', 'no_ipv4', is_flag=True,
