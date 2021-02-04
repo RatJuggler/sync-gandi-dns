@@ -4,15 +4,10 @@ from testfixtures import LogCapture
 from unittest import TestCase
 from unittest.mock import patch, MagicMock
 
+from tests.utils import log_check
+
+from syncgandidns.configure_logging import logging
 from syncgandidns.sync_ip_address import do_sync
-import syncgandidns.configure_logging as cl
-
-
-def _log_check(log_out: LogCapture, *expects: str) -> None:
-    root = 'root'
-    log_level = cl.logging.getLevelName(cl.logging.INFO)
-    for expected in expects:
-        log_out.check_present((root, log_level, expected))
 
 
 @patch('syncgandidns.gandi_api.GandiAPI.update_ipv4_address')
@@ -34,7 +29,7 @@ class TestSyncIPAddress(TestCase):
         self.DUMMY_APIKEY = "secretpassword"
 
     def do_sync_wrap(self, no_ipv4: bool, ipv4: Optional[str], no_ipv6: bool, ipv6: Optional[str]) -> LogCapture:
-        with LogCapture(level=cl.logging.INFO) as log_out:
+        with LogCapture(level=logging.INFO) as log_out:
             do_sync((self.DUMMY_DOMAIN,), self.DUMMY_APIKEY, no_ipv4, ipv4, no_ipv6, ipv6)
             return log_out
 
@@ -52,13 +47,13 @@ class TestSyncIPAddress(TestCase):
         log_out = self.do_sync_wrap(False, None, False, None)
         self.assertEqual(1, update_ipv6_address_mock.call_count)
         self.assertEqual(1, update_ipv4_address_mock.call_count)
-        _log_check(log_out,
-                   "Update IPV4 to: <automatic lookup>",
-                   "Update IPV6 to: <automatic lookup>",
-                   "{0} current IPV4 address: {1}".format(self.DUMMY_DOMAIN, self.DUMMY_GANDI_IPV4),
-                   "{0} IPV4 address updated to: {1}".format(self.DUMMY_DOMAIN, self.DUMMY_IPIFY_IPV4),
-                   "{0} current IPV6 address: {1}".format(self.DUMMY_DOMAIN, self.DUMMY_GANDI_IPV6),
-                   "{0} IPV6 address updated to: {1}".format(self.DUMMY_DOMAIN, self.DUMMY_IPIFY_IPV6))
+        log_check(log_out,
+                  "Update IPV4 to: <automatic lookup>",
+                  "Update IPV6 to: <automatic lookup>",
+                  "{0} current IPV4 address: {1}".format(self.DUMMY_DOMAIN, self.DUMMY_GANDI_IPV4),
+                  "{0} IPV4 address updated to: {1}".format(self.DUMMY_DOMAIN, self.DUMMY_IPIFY_IPV4),
+                  "{0} current IPV6 address: {1}".format(self.DUMMY_DOMAIN, self.DUMMY_GANDI_IPV6),
+                  "{0} IPV6 address updated to: {1}".format(self.DUMMY_DOMAIN, self.DUMMY_IPIFY_IPV6))
 
     def test_sync_ip_automatic_no_change(self,
                                          ipify_get_ipv6_address_mock: MagicMock,
@@ -74,13 +69,13 @@ class TestSyncIPAddress(TestCase):
         log_out = self.do_sync_wrap(False, None, False, None)
         self.assertEqual(0, update_ipv6_address_mock.call_count)
         self.assertEqual(0, update_ipv4_address_mock.call_count)
-        _log_check(log_out,
-                   "Update IPV4 to: <automatic lookup>",
-                   "Update IPV6 to: <automatic lookup>",
-                   "{0} current IPV4 address: {1}".format(self.DUMMY_DOMAIN, self.DUMMY_IPIFY_IPV4),
-                   "{0} IPV4 address already current so not updated.".format(self.DUMMY_DOMAIN),
-                   "{0} current IPV6 address: {1}".format(self.DUMMY_DOMAIN, self.DUMMY_IPIFY_IPV6),
-                   "{0} IPV6 address already current so not updated.".format(self.DUMMY_DOMAIN))
+        log_check(log_out,
+                  "Update IPV4 to: <automatic lookup>",
+                  "Update IPV6 to: <automatic lookup>",
+                  "{0} current IPV4 address: {1}".format(self.DUMMY_DOMAIN, self.DUMMY_IPIFY_IPV4),
+                  "{0} IPV4 address already current so not updated.".format(self.DUMMY_DOMAIN),
+                  "{0} current IPV6 address: {1}".format(self.DUMMY_DOMAIN, self.DUMMY_IPIFY_IPV6),
+                  "{0} IPV6 address already current so not updated.".format(self.DUMMY_DOMAIN))
 
     def test_sync_ip_address_change_both(self,
                                          ipify_get_ipv6_address_mock: MagicMock,
@@ -96,13 +91,13 @@ class TestSyncIPAddress(TestCase):
         log_out = self.do_sync_wrap(False, self.DUMMY_SET_IPV4, False, self.DUMMY_SET_IPV6)
         self.assertEqual(1, update_ipv6_address_mock.call_count)
         self.assertEqual(1, update_ipv4_address_mock.call_count)
-        _log_check(log_out,
-                   "Update IPV4 to: {0}".format(self.DUMMY_SET_IPV4),
-                   "Update IPV6 to: {0}".format(self.DUMMY_SET_IPV6),
-                   "{0} current IPV4 address: {1}".format(self.DUMMY_DOMAIN, self.DUMMY_GANDI_IPV4),
-                   "{0} IPV4 address updated to: {1}".format(self.DUMMY_DOMAIN, self.DUMMY_SET_IPV4),
-                   "{0} current IPV6 address: {1}".format(self.DUMMY_DOMAIN, self.DUMMY_GANDI_IPV6),
-                   "{0} IPV6 address updated to: {1}".format(self.DUMMY_DOMAIN, self.DUMMY_SET_IPV6))
+        log_check(log_out,
+                  "Update IPV4 to: {0}".format(self.DUMMY_SET_IPV4),
+                  "Update IPV6 to: {0}".format(self.DUMMY_SET_IPV6),
+                  "{0} current IPV4 address: {1}".format(self.DUMMY_DOMAIN, self.DUMMY_GANDI_IPV4),
+                  "{0} IPV4 address updated to: {1}".format(self.DUMMY_DOMAIN, self.DUMMY_SET_IPV4),
+                  "{0} current IPV6 address: {1}".format(self.DUMMY_DOMAIN, self.DUMMY_GANDI_IPV6),
+                  "{0} IPV6 address updated to: {1}".format(self.DUMMY_DOMAIN, self.DUMMY_SET_IPV6))
 
     def test_sync_ip_address_change_ipv4(self,
                                          ipify_get_ipv6_address_mock: MagicMock,
@@ -118,13 +113,13 @@ class TestSyncIPAddress(TestCase):
         log_out = self.do_sync_wrap(False, self.DUMMY_SET_IPV4, False, None)
         self.assertEqual(0, update_ipv6_address_mock.call_count)
         self.assertEqual(1, update_ipv4_address_mock.call_count)
-        _log_check(log_out,
-                   "Update IPV4 to: {0}".format(self.DUMMY_SET_IPV4),
-                   "Update IPV6 to: <automatic lookup>",
-                   "{0} current IPV4 address: {1}".format(self.DUMMY_DOMAIN, self.DUMMY_GANDI_IPV4),
-                   "{0} IPV4 address updated to: {1}".format(self.DUMMY_DOMAIN, self.DUMMY_SET_IPV4),
-                   "{0} current IPV6 address: {1}".format(self.DUMMY_DOMAIN, self.DUMMY_IPIFY_IPV6),
-                   "{0} IPV6 address already current so not updated.".format(self.DUMMY_DOMAIN))
+        log_check(log_out,
+                  "Update IPV4 to: {0}".format(self.DUMMY_SET_IPV4),
+                  "Update IPV6 to: <automatic lookup>",
+                  "{0} current IPV4 address: {1}".format(self.DUMMY_DOMAIN, self.DUMMY_GANDI_IPV4),
+                  "{0} IPV4 address updated to: {1}".format(self.DUMMY_DOMAIN, self.DUMMY_SET_IPV4),
+                  "{0} current IPV6 address: {1}".format(self.DUMMY_DOMAIN, self.DUMMY_IPIFY_IPV6),
+                  "{0} IPV6 address already current so not updated.".format(self.DUMMY_DOMAIN))
 
     def test_sync_ip_address_change_ipv6(self,
                                          ipify_get_ipv6_address_mock: MagicMock,
@@ -140,13 +135,13 @@ class TestSyncIPAddress(TestCase):
         log_out = self.do_sync_wrap(False, None, False, self.DUMMY_SET_IPV6)
         self.assertEqual(1, update_ipv6_address_mock.call_count)
         self.assertEqual(0, update_ipv4_address_mock.call_count)
-        _log_check(log_out,
-                   "Update IPV4 to: <automatic lookup>",
-                   "Update IPV6 to: {0}".format(self.DUMMY_SET_IPV6),
-                   "{0} current IPV4 address: {1}".format(self.DUMMY_DOMAIN, self.DUMMY_IPIFY_IPV4),
-                   "{0} IPV4 address already current so not updated.".format(self.DUMMY_DOMAIN),
-                   "{0} current IPV6 address: {1}".format(self.DUMMY_DOMAIN, self.DUMMY_GANDI_IPV6),
-                   "{0} IPV6 address updated to: {1}".format(self.DUMMY_DOMAIN, self.DUMMY_SET_IPV6))
+        log_check(log_out,
+                  "Update IPV4 to: <automatic lookup>",
+                  "Update IPV6 to: {0}".format(self.DUMMY_SET_IPV6),
+                  "{0} current IPV4 address: {1}".format(self.DUMMY_DOMAIN, self.DUMMY_IPIFY_IPV4),
+                  "{0} IPV4 address already current so not updated.".format(self.DUMMY_DOMAIN),
+                  "{0} current IPV6 address: {1}".format(self.DUMMY_DOMAIN, self.DUMMY_GANDI_IPV6),
+                  "{0} IPV6 address updated to: {1}".format(self.DUMMY_DOMAIN, self.DUMMY_SET_IPV6))
 
     def test_sync_ip_address_change_none(self,
                                          ipify_get_ipv6_address_mock: MagicMock,
@@ -162,10 +157,10 @@ class TestSyncIPAddress(TestCase):
         log_out = self.do_sync_wrap(True, self.DUMMY_SET_IPV4, True, self.DUMMY_SET_IPV6)
         self.assertEqual(0, update_ipv6_address_mock.call_count)
         self.assertEqual(0, update_ipv4_address_mock.call_count)
-        _log_check(log_out,
-                   "Update IPV4 to: <disabled>",
-                   "Update IPV6 to: <disabled>",
-                   "{0} current IPV4 address: {1}".format(self.DUMMY_DOMAIN, self.DUMMY_GANDI_IPV4),
-                   "{0} IPV4 address not updated, new address not supplied!".format(self.DUMMY_DOMAIN),
-                   "{0} current IPV6 address: {1}".format(self.DUMMY_DOMAIN, self.DUMMY_GANDI_IPV6),
-                   "{0} IPV6 address not updated, new address not supplied!".format(self.DUMMY_DOMAIN))
+        log_check(log_out,
+                  "Update IPV4 to: <disabled>",
+                  "Update IPV6 to: <disabled>",
+                  "{0} current IPV4 address: {1}".format(self.DUMMY_DOMAIN, self.DUMMY_GANDI_IPV4),
+                  "{0} IPV4 address not updated, new address not supplied!".format(self.DUMMY_DOMAIN),
+                  "{0} current IPV6 address: {1}".format(self.DUMMY_DOMAIN, self.DUMMY_GANDI_IPV6),
+                  "{0} IPV6 address not updated, new address not supplied!".format(self.DUMMY_DOMAIN))
