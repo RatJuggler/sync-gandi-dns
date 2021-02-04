@@ -16,7 +16,7 @@ changes. The API is marked as (beta), but I've not experienced any issues with i
 To access the API you need to obtain a key via the Security tab under "User Settings", "Manage the user account and security 
 settings".
 
-It also needs to find out what the latest IP address is before deciding if an update is required. To do this it uses the [ipify API](https://www.ipify.org/) 
+It also needs to find out what the latest IP address is before deciding if an update is required. To do this it uses the *[ipify API](https://www.ipify.org/)* 
 which provides simple endpoints for finding your public [IPV4](https://api.ipify.org) and [IPV6](https://api6.ipify.org) address.
 
 ## Installing
@@ -68,6 +68,10 @@ Options:
   --help                          Show this message and exit.
 ```
 ## Docker
+
+**Note:** IPV6 connectivity is not enabled by default for docker containers, so the *ipify* IPV6 lookup will always fail, and the 
+IPV6 address cannot then be kept up to date. I am currently reading [this](https://medium.com/@skleeschulte/how-to-enable-ipv6-for-docker-containers-on-ubuntu-18-04-c68394a219a2) 
+blog post to better understand how IPV6 can be enabled.
 
 Alternatively docker build and compose files are available which create a standalone image to run the sync on an hourly schedule.
 
