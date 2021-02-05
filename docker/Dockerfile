@@ -20,4 +20,4 @@ WORKDIR /src
 
 # Copy and install the application.
 COPY . .
-RUN pip3 install -U .
+RUN pip3 install --no-cache-dir -U .
