@@ -11,7 +11,7 @@ def _sync_ip(domain: str, ip_type: str, new_ip: Optional[str], get_ip: callable,
     current_ip = get_ip(domain)
     logging.info("{0} current {1} address: {2}".format(domain, ip_type, current_ip))
     if new_ip is None:
-        logging.info("{0} not updated, new {1} address not supplied!".format(domain, ip_type))
+        logging.info("{0} {1} address not updated, new address not supplied!".format(domain, ip_type))
     elif new_ip == current_ip:
         logging.info("{0} {1} address already current so not updated.".format(domain, ip_type))
     else:

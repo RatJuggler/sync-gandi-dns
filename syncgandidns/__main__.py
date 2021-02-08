@@ -1,6 +1,7 @@
 import click
 import logging
 
+from environs import Env
 from typing import Optional, Tuple
 
 from .domain_param import DOMAIN
@@ -9,6 +10,13 @@ from .ipv6address_param import IPV6_ADDRESS
 from .configure_logging import configure_logging
 from .gandi_api import GandiAPI
 from .sync_ip_address import do_sync
+
+
+# Check for an environment variable file before setting up Click.
+env = Env()
+env.read_env('sync-gandi-dns.env')
+ENVVAR_GANDI_DOMAINS = 'GANDI_DOMAINS'
+ENVVAR_GANDI_APIKEY = 'GANDI_APIKEY'
 
 
 def test_access(domains: Tuple[str, ...], apikey: str) -> None:
@@ -26,10 +34,11 @@ def test_access(domains: Tuple[str, ...], apikey: str) -> None:
     The Gandi API key can be set using the GANDI_APIKEY environment variable.
     ''')
 @click.version_option()
-@click.option('-d', '--domain', 'domains', type=DOMAIN, required=True, multiple=True, envvar='GANDI_DOMAINS',
-              help='A domain to update the DNS for. Repeat the option to update multiple domains.')
-@click.option('-a', '--apikey', 'apikey', type=click.STRING, required=True, envvar='GANDI_APIKEY',
-              help='Your Gandi API key.')
+@click.option('-d', '--domain', 'domains', type=DOMAIN, required=True, multiple=True, envvar=ENVVAR_GANDI_DOMAINS,
+              help='A domain to update the DNS for. Repeat the option to update multiple domains.',
+              default=lambda: env(ENVVAR_GANDI_DOMAINS, None))
+@click.option('-a', '--apikey', 'apikey', type=click.STRING, required=True, envvar=ENVVAR_GANDI_APIKEY,
+              help='Your Gandi API key.', default=lambda: env(ENVVAR_GANDI_APIKEY, None))
 @click.option('-ipv4', '--ipv4-address', 'ipv4', type=IPV4_ADDRESS,
               help='Override the IPV4 address to update the domain DNS with.')
 @click.option('-no-ipv4', '--no-ipv4-update', 'no_ipv4', is_flag=True,

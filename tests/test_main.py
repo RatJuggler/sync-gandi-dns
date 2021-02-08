@@ -1,18 +1,14 @@
 from unittest import TestCase
+from unittest.mock import patch, MagicMock
 from click.testing import CliRunner
 
 from testfixtures import LogCapture
-from unittest.mock import patch, MagicMock
+
+from tests.utils import log_check
+
+from syncgandidns.configure_logging import logging
 
 import syncgandidns.__main__ as main
-import syncgandidns.configure_logging as cl
-
-
-def _log_check(log_out: LogCapture, *expects: str) -> None:
-    root = 'root'
-    log_level = cl.logging.getLevelName(cl.logging.INFO)
-    for expected in expects:
-        log_out.check_present((root, log_level, expected))
 
 
 class TestMain(TestCase):
@@ -71,12 +67,12 @@ class TestMain(TestCase):
     def test_test(self,
                   gandi_api_mock: MagicMock) -> None:
         gandi_api_mock.return_value.get_domain_records.return_value = ['<DNS record 1>', '<DNS record 3>', '<DNS record 3>']
-        with LogCapture(level=cl.logging.INFO) as log_out:
+        with LogCapture(level=logging.INFO) as log_out:
             result = self.runner.invoke(main.syncgandidns, ['-d', 'pickle.jar',
                                                             '-a', 'secretpassword',
                                                             '-t'])
         self.assertEqual(0, result.exit_code)
-        _log_check(log_out,
-                   'Testing access to DNS records for domain: pickle.jar',
-                   '3 DNS Records retrieved!')
+        log_check(log_out,
+                  'Testing access to DNS records for domain: pickle.jar',
+                  '3 DNS Records retrieved!')
         gandi_api_mock.assert_called_once()

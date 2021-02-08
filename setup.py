@@ -5,7 +5,7 @@ with open("README.md", "r") as fh:
 
 setup(
     name='syncgandidns',
-    version='0.1.0',
+    version='1.0.0',
     description='Sync a dynamic IP address with a Gandi DNS domain entry.',
     long_description=long_description,
     long_description_content_type='text/markdown',
@@ -28,6 +28,7 @@ setup(
     install_requires=[
         # Check latest releases on piwheels: https://www.piwheels.org/
         'click ==7.1.2',
+        'environs ==9.3.0',
         'requests ==2.25.1'
     ],
     test_suite='tests',
