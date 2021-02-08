@@ -8,5 +8,5 @@ services:
       dockerfile: ./docker/Dockerfile
       target: sync-gandi-dns
     env_file:
-      - ./docker/env.list
+      - sync-gandi-dns.env
     restart: unless-stopped
