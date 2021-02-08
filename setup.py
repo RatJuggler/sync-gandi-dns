@@ -28,6 +28,7 @@ setup(
     install_requires=[
         # Check latest releases on piwheels: https://www.piwheels.org/
         'click ==7.1.2',
+        'environs ==9.3.0',
         'requests ==2.25.1'
     ],
     test_suite='tests',
