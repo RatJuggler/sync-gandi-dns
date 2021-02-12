@@ -84,10 +84,10 @@ working by using:
 ## Docker
 
 **Note:** IPV6 connectivity is not enabled by default for docker containers, so the *ipify* IPV6 lookup will always fail, and the 
-IPV6 address cannot then be kept up to date. I am currently reading [this](https://medium.com/@skleeschulte/how-to-enable-ipv6-for-docker-containers-on-ubuntu-18-04-c68394a219a2) 
-blog post to better understand how IPV6 can be enabled.
+IPV6 address cannot then be kept up to date. I am currently [researching](https://medium.com/@skleeschulte/how-to-enable-ipv6-for-docker-containers-on-ubuntu-18-04-c68394a219a2) 
+how best to proceed with configuring this.
 
-Alternatively docker build and compose files are available which create a standalone image to run the sync on an hourly schedule.
+Docker build and compose files are available which create a standalone image to run the sync on an hourly schedule.
 
 Edit the *docker/crontab.txt* file to set your preferred timings.
 
@@ -95,16 +95,18 @@ Create the image with:
 
     $ docker build -f docker/Dockerfile -t sync-gandi-dns:local .
 
-The environment variables should be used to set the domains to update, and the Gandi API key. It is important that the API key is 
-not included in the image in case it is pushed to a public repository (and it's also just best practice). There are a number of 
-ways to do this but probably the easiest is to create a `sync-gandi-dns.env` file as described above and then run the image with 
-the `--env-file` option.
+Environment variables should be used to set the domains to update, and the Gandi API key. It is important that the API key is not 
+included in the image in case it is pushed to a public repository (and it's also just best practice). There are a number of ways 
+to do this but probably the easiest is to create a `sync-gandi-dns.env` file as described above and then run the image with the 
+`--env-file` option.
 
     $ docker run sync-gandi-dns:local -d --env-file sync-gandi-dns.env
 
 Or just use the compose file to do everything:
 
     $ docker-compose up -d
+
+Environment variables can also be used to configure image tagging (see the file).
 
 ## Development
 
