@@ -1,11 +1,16 @@
 version: '3.8'
 
+x-args: &args
+  args:
+    BUILD_TAG: ${BUILD_TAG:-local}
+
 services:
   sync-gandi-dns:
-    image: ${dockerId:-johnchase}/sync-gandi-dns:${BUILD_TAG:-local}
+    image: ${DOCKER_REGISTRY}${DOCKER_ID}sync-gandi-dns:${IMAGE_TAG:-latest}
     build:
       context: .
       dockerfile: ./docker/Dockerfile
+      <<: *args
       target: sync-gandi-dns
     env_file:
       - sync-gandi-dns.env
