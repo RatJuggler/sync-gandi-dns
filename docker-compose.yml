@@ -6,7 +6,7 @@ x-args: &args
 
 services:
   sync-gandi-dns:
-    image: ${DOCKER_REGISTRY}${DOCKER_ID}sync-gandi-dns:${IMAGE_TAG:-latest}
+    image: ${REGISTRY}${REPOSITORY}sync-gandi-dns:${IMAGE_TAG:-latest}
     build:
       context: .
       dockerfile: ./docker/Dockerfile
