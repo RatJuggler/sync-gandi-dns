@@ -5,7 +5,7 @@ from typing import Optional
 
 pattern = re.compile(
     r'^https?://'   # http:// or https://
-    r'(?:(?:[a-zA-Z0-9](?:[a-zA-Z0-9-_]{0,61}[A-Za-z0-9])?\.)+[A-Za-z0-9][A-Za-z0-9-_]{0,61}[A-Za-z]|'    # see domain validation
+    r'(?:(?:[A-Z0-9](?:[A-Z0-9-_]{0,61}[A-Z0-9])?\.)+[A-Z0-9][A-Z0-9-_]{0,61}[A-Z]|'    # see domain validation
     r'localhost|'   # or localhost
     r'\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3})' # or ip address
     r'(?::\d+)?$',    # optional port
