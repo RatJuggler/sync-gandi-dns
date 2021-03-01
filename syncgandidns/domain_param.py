@@ -4,10 +4,11 @@ from click import ParamType
 from typing import Optional
 
 pattern = re.compile(
-    r'^(?:[a-zA-Z0-9]'  # First character of the domain
-    r'(?:[a-zA-Z0-9-_]{0,61}[A-Za-z0-9])?\.)'  # Sub domain + hostname
-    r'+[A-Za-z0-9][A-Za-z0-9-_]{0,61}'  # First 61 characters of the gTLD
-    r'[A-Za-z]$'  # Last character of the gTLD
+    r'^(?:[A-Z0-9]'  # First character of the domain
+    r'(?:[A-Z0-9-_]{0,61}[A-Z0-9])?\.)'  # Sub domain + hostname
+    r'+[A-Z0-9][A-Z0-9-_]{0,61}'  # First 61 characters of the gTLD
+    r'[A-Z]$',  # Last character of the gTLD
+    re.IGNORECASE
 )
 
 

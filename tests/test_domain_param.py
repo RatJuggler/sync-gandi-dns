@@ -4,7 +4,7 @@ from click import BadParameter
 from syncgandidns.domain_param import DomainParamType
 
 
-class TestIPv4AddressParam(TestCase):
+class TestDomainParam(TestCase):
 
     def setUp(self) -> None:
         self.param_type = DomainParamType()
