@@ -61,6 +61,7 @@ Options:
   -l, --log-level [DEBUG|VERBOSE|INFO|WARNING]
                                   Show additional logging information.
                                   [default: INFO]
+  -m, --metrics URL               Push metrics to this URL.
   -t, --test                      Test the Gandi API key and exit.  [default:
                                   False]
   --help                          Show this message and exit.
@@ -87,9 +88,10 @@ working by using:
 IPV6 address cannot then be kept up to date. I am currently [researching](https://medium.com/@skleeschulte/how-to-enable-ipv6-for-docker-containers-on-ubuntu-18-04-c68394a219a2) 
 how best to proceed with configuring this.
 
-Docker build and compose files are available which create a standalone image to run the sync on an hourly schedule.
+Docker build and compose files are available which create a standalone image to run the sync on an hourly schedule using the push 
+metrics option to record its activity.
 
-Edit the *docker/crontab.txt* file to set your preferred timings.
+Edit the *docker/crontab.txt* file to set your preferred timings and change the options used.
 
 Create the image with:
 
@@ -106,7 +108,8 @@ Or just use the compose file to do everything:
 
     $ docker-compose up -d
 
-Environment variables can also be used to configure image tagging (see the file).
+Environment variables can also be used to configure image tagging (see the file), and a simple health check, using the `--test` 
+option, is available if running under orchestration.
 
 ## Development
 
