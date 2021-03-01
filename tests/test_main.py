@@ -27,6 +27,7 @@ class TestMain(TestCase):
         self.assertIn(" -ipv6, --ipv6-address ", result.output)
         self.assertIn(" -no-ipv6, --no-ipv6-update ", result.output)
         self.assertIn(" -l, --log-level ", result.output)
+        self.assertIn(" -m, --metrics ", result.output)
         self.assertIn(" -t, --test ", result.output)
         self.assertIn(" --help ", result.output)
 
