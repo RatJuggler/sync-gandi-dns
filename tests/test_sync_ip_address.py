@@ -1,4 +1,5 @@
 from typing import Optional
+from prometheus_client import REGISTRY
 
 from testfixtures import LogCapture
 from unittest import TestCase
@@ -29,8 +30,12 @@ class TestSyncIPAddress(TestCase):
         self.DUMMY_APIKEY = "secretpassword"
 
     def do_sync_wrap(self, no_ipv4: bool, ipv4: Optional[str], no_ipv6: bool, ipv6: Optional[str]) -> LogCapture:
+        REGISTRY.unregister(REGISTRY._names_to_collectors['do_sync_last_success'])
+        REGISTRY.unregister(REGISTRY._names_to_collectors['do_sync_last_failure'])
+        REGISTRY.unregister(REGISTRY._names_to_collectors['do_sync_duration'])
+        REGISTRY.unregister(REGISTRY._names_to_collectors['do_sync_processed'])
         with LogCapture(level=logging.INFO) as log_out:
-            do_sync((self.DUMMY_DOMAIN,), self.DUMMY_APIKEY, no_ipv4, ipv4, no_ipv6, ipv6)
+            do_sync((self.DUMMY_DOMAIN,), self.DUMMY_APIKEY, no_ipv4, ipv4, no_ipv6, ipv6, None)
             return log_out
 
     def test_automatic(self,
