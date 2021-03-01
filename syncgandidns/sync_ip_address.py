@@ -67,6 +67,10 @@ def do_sync(domains: Tuple[str, ...], apikey: str, no_ipv4: bool, ipv4: Optional
         success.set_to_current_time()
     except:
         failure.set_to_current_time()
+        raise
     finally:
         if metrics:
+            logging.info("Pushing metrics to: {0}".format(metrics))
             push_to_gateway(metrics, job='sync-gandi-dns', registry=registry)
+
+    logging.info("sync-gandi-dns completed normally.")
