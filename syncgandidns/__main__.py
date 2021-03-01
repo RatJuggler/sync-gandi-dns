@@ -7,6 +7,7 @@ from typing import Optional, Tuple
 from .domain_param import DOMAIN
 from .ipv4address_param import IPV4_ADDRESS
 from .ipv6address_param import IPV6_ADDRESS
+from .url_param import URL
 from .configure_logging import configure_logging
 from .gandi_api import GandiAPI
 from .sync_ip_address import do_sync
@@ -49,10 +50,12 @@ def test_access(domains: Tuple[str, ...], apikey: str) -> None:
               help='Don\'t update the IPV6 address, will override \'-ipv6\'.')
 @click.option('-l', '--log-level', 'level', type=click.Choice(['DEBUG', 'VERBOSE', 'INFO', 'WARNING']),
               help='Show additional logging information.', default='INFO', show_default=True)
+@click.option('-m', '--metrics', 'metrics', type=URL,
+              help="Push metrics to this URL.")
 @click.option('-t', '--test', 'test', default=False, is_flag=True,
               help="Test the Gandi API key and exit.", show_default=True)
 def syncgandidns(domains: Tuple[str, ...], apikey: str, ipv4: Optional[str], no_ipv4: bool, ipv6: Optional[str], no_ipv6: bool,
-                 level: Optional[str], test: bool) -> None:
+                 level: Optional[str], metrics: Optional[str], test: bool) -> None:
     """
     Sync local dynamic IP address with Gandi DNS.
     :param domains: To sync the IP address for
@@ -62,6 +65,7 @@ def syncgandidns(domains: Tuple[str, ...], apikey: str, ipv4: Optional[str], no_
     :param ipv6: To sync to the domain DNS
     :param no_ipv6: Don't update IPV6
     :param level: Set a logging level; DEBUG, VERBOSE, INFO or WARNING
+    :param metrics: Push metrics to the given URL
     :param test: Test access to a domains records
     :return: No meaningful return
     """
