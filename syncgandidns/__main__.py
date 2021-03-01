@@ -74,7 +74,7 @@ def syncgandidns(domains: Tuple[str, ...], apikey: str, ipv4: Optional[str], no_
     if test:
         test_access(domains, apikey)
     else:
-        do_sync(domains, apikey, no_ipv4, ipv4, no_ipv6, ipv6)
+        do_sync(domains, apikey, no_ipv4, ipv4, no_ipv6, ipv6, metrics)
 
 
 if __name__ == '__main__':
