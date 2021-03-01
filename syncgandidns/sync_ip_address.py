@@ -44,6 +44,7 @@ def _get_update_ip(ip_type: str, no_ip: bool, ip: Optional[str], get_ip: callabl
 
 def do_sync(domains: Tuple[str, ...], apikey: str, no_ipv4: bool, ipv4: Optional[str], no_ipv6: bool, ipv6: Optional[str],
             metrics: Optional[str]) -> None:
+
     success = Gauge("do_sync_last_success", "Last time the sync-gandi-dns job ran successfully.")
     failure = Gauge("do_sync_last_failure", "Last time the sync-gandi-dns job failed.")
     duration = Gauge("do_sync_duration", "The duration of the sync-gandi-dns job.")
@@ -65,7 +66,7 @@ def do_sync(domains: Tuple[str, ...], apikey: str, no_ipv4: bool, ipv4: Optional
                 _sync_ip(domain, 'IPV6', update_ipv6, gandi_api.get_ipv6_address, gandi_api.update_ipv6_address)
                 processed.labels(domain).inc()
         success.set_to_current_time()
-    except:
+    except Exception:
         failure.set_to_current_time()
         raise
     finally:
