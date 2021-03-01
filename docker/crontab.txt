@@ -1,2 +1,2 @@
-@reboot /usr/local/bin/syncgandidns
-13 * * * *  /usr/local/bin/syncgandidns
+@reboot /usr/local/bin/syncgandidns -m http://pushgateway:9091
+13 * * * *  /usr/local/bin/syncgandidns -m http://pushgateway:9091
