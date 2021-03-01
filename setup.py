@@ -29,7 +29,8 @@ setup(
         # Check latest releases on piwheels: https://www.piwheels.org/
         'click ==7.1.2',
         'environs ==9.3.0',
-        'requests ==2.25.1'
+        'requests ==2.25.1',
+        'prometheus_client ==0.9.0'
     ],
     test_suite='tests',
     tests_require=[
