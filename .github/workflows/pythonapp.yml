@@ -16,9 +16,9 @@ jobs:
         python-version: ['3.7', '3.8']
 
     steps:
-    - uses: actions/checkout@v2
+    - uses: actions/checkout@v4
     - name: "Set up Python ${{ matrix.python-version }}"
-      uses: actions/setup-python@v1
+      uses: actions/setup-python@v4
       with:
         python-version: "${{ matrix.python-version }}"
     - name: "Install dependencies"
@@ -33,4 +33,4 @@ jobs:
         tox
       env:
         GANDI_TEST_APIKEY: ${{ secrets.GANDI_API_KEY }}
-        GANDI_TEST_DOMAIN: "jurassic-john.site"
+        GANDI_TEST_DOMAIN: "jurassic-john.net"
